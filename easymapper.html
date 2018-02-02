@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<title>Easy Mapper</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="easymapper.css">
+<script src="jquery-3.3.1.min.js"></script>
+<script src="easymapper.js"></script>
+</head>
+<body>
+
+<!-- Dim Screen -->
+<div id="dim" class="btn-closelb"></div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+	<div id="lb-title">
+		<p></p>
+		<a class="btn-closelb" href="#">×</a>
+	</div>
+	<div id="lb-content"></div>
+	<div id="lb-btnset">
+		<a class="negative" href="#"></a>
+		<a class="positive" href="#"></a>
+	</div>
+</div>
+
+<!-- Navigation Bar -->
+<div id="navbar">
+	<ul>
+		<li>
+			<p>SOURCE ▾</p>
+			<ul>
+				<li>
+					<a id="btn-url" class="btn-openlb" href="#">URL</a>
+				</li>
+				<li>
+					<a id="btn-local" class="btn-openlb" href="#">LOCAL</a>
+				</li>
+			</ul>
+		</li>
+		<li class="chk">
+			<p>UNIT ▾</p>
+			<ul>
+				<li class="active">
+					<a id="btn-percent" class="btn-nav" href="#">%</a>
+				</li>
+				<li>
+					<a id="btn-pixels" class="btn-nav" href="#">PX</a>
+				</li>
+			</ul>
+		</li>
+		<li class="chk">
+			<p>MEASURE ▾</p>
+			<ul>
+				<li class="active">
+					<a id="btn-drag" class="btn-nav" href="#">DRAG</a>
+				</li>
+				<li>
+					<a id="btn-click" class="btn-nav" href="#">CLICK</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<a id="btn-clear" class="btn-nav" href="#">CLEAR</a>
+		</li>
+		<li>
+			<a id="btn-generate" class="btn-openlb" href="#">GENERATE</a>
+		</li>
+		<li>
+			<a id="btn-help" class="btn-openlb" href="#">?</a>
+		</li>
+	</ul>
+</div>
+
+<!-- Workspace -->
+<div id="workspace">
+	<ul class="ruler x">
+		<li class="long"><span>0px</span></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="long"><span>50px</span></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="long"><span>100px</span></li>
+	</ul>
+	<ul class="ruler y">
+		<li class="long"><span>0</span></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="long"><span>50</span></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="long"><span>100</span></li>
+	</ul>
+</div>
+
+</body>
+</html>
