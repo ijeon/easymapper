@@ -11,97 +11,81 @@
 <body>
 
 <!-- Dim Screen -->
-<div id="dim" class="btn-closelb"></div>
+<div id="dim" class="btn-lb-close"></div>
 
 <!-- Lightbox -->
 <div id="lightbox">
 	<div id="lb-title">
 		<p></p>
-		<a class="btn-closelb" href="#">×</a>
+		<a class="btn-lb-close" href="#">×</a>
 	</div>
 	<div id="lb-content"></div>
 	<div id="lb-btnset">
-		<a class="negative" href="#"></a>
-		<a class="positive" href="#"></a>
+		<a id="btn-lb-no" href="#"></a>
+		<a id="btn-lb-yes" href="#"></a>
 	</div>
 </div>
 
 <!-- Navigation Bar -->
 <div id="navbar">
+	<a id="link" href="https://github.com/inpyodev/easymapper" target="_blank">EASY MAPPER</a>
 	<ul>
 		<li>
 			<p>SOURCE ▾</p>
 			<ul>
 				<li>
-					<a id="btn-url" class="btn-openlb" href="#">URL</a>
+					<a class="btn-lb-open" data-json="code" href="#">CODE</a>
 				</li>
 				<li>
-					<a id="btn-local" class="btn-openlb" href="#">LOCAL</a>
+					<a class="btn-lb-open" data-json="url" href="#">URL</a>
+				</li>
+				<li>
+					<a class="btn-lb-open" data-json="local" href="#">LOCAL</a>
 				</li>
 			</ul>
 		</li>
 		<li class="chk">
 			<p>UNIT ▾</p>
-			<ul>
+			<ul class="unit">
 				<li class="active">
-					<a id="btn-percent" class="btn-nav" href="#">%</a>
+					<a class="btn-select" href="#">%</a>
 				</li>
 				<li>
-					<a id="btn-pixels" class="btn-nav" href="#">PX</a>
+					<a class="btn-select" href="#">PX</a>
 				</li>
 			</ul>
 		</li>
 		<li class="chk">
 			<p>MEASURE ▾</p>
-			<ul>
+			<ul class="measure">
 				<li class="active">
-					<a id="btn-drag" class="btn-nav" href="#">DRAG</a>
+					<a class="btn-select" href="#">DRAG</a>
 				</li>
 				<li>
-					<a id="btn-click" class="btn-nav" href="#">CLICK</a>
+					<a class="btn-select" href="#">CLICK</a>
 				</li>
 			</ul>
 		</li>
 		<li>
-			<a id="btn-clear" class="btn-nav" href="#">CLEAR</a>
+			<a class="btn-lb-open" data-json="clear" href="#">CLEAR</a>
 		</li>
 		<li>
-			<a id="btn-generate" class="btn-openlb" href="#">GENERATE</a>
+			<a class="btn-lb-open" data-json="generate" href="#">GENERATE</a>
 		</li>
 		<li>
-			<a id="btn-help" class="btn-openlb" href="#">?</a>
+			<a class="btn-lb-open" data-json="help" href="#">?</a>
 		</li>
 	</ul>
 </div>
 
 <!-- Workspace -->
 <div id="workspace">
-	<ul class="ruler x">
-		<li class="long"><span>0px</span></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li class="long"><span>50px</span></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li class="long"><span>100px</span></li>
-	</ul>
-	<ul class="ruler y">
-		<li class="long"><span>0</span></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li class="long"><span>50</span></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li class="long"><span>100</span></li>
-	</ul>
+	<div id="img">
+		<img id="srcimg" src="sampleimg.png">
+	</div>
+	<a id="btn-toggle-unit" href="#"></a>
+	<ul class="ruler perc x"></ul>
+	<ul class="ruler perc y"></ul>
 </div>
 
 </body>
