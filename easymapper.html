@@ -5,7 +5,9 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="stylesheet" href="easymapper.css">
+<link rel="stylesheet" href="jquery-ui.min.css">
 <script src="jquery-3.3.1.min.js"></script>
+<script src="jquery-ui.min.js"></script>
 <script src="easymapper.js"></script>
 </head>
 <body>
@@ -28,7 +30,7 @@
 
 <!-- Navigation Bar -->
 <div id="navbar">
-	<a id="link" href="https://github.com/inpyodev/easymapper" target="_blank">EASY MAPPER</a>
+	<a id="multisrc" href="#">SOURCE</a>
 	<ul>
 		<li>
 			<p>SOURCE ▾</p>
@@ -80,13 +82,19 @@
 
 <!-- Workspace -->
 <div id="workspace">
-	<div id="img">
-		<img id="srcimg" src="sampleimg.png">
+	<div id="canvas">
+		<ul id="maps"><li class="map" style="width:100px; height:100px; top:120px"><a class="btn-map-remove" href="#">×</a><span class="icon-resize">⤡</span></li><li class="map" style="width:100px; height:100px;"><a class="btn-map-remove" href="#">×</a><span class="icon-resize">⤡</span></li></ul>
+		<div id="imgwrap">
+			<div class="axis x a"></div>
+			<div class="axis y a"></div>
+			<div class="axis x b"></div>
+			<div class="axis y b"></div>
+			<img id="img" src="sampleimg.png">
+		</div>		
 	</div>
 	<a id="btn-toggle-unit" href="#"></a>
 	<ul class="ruler perc x"></ul>
 	<ul class="ruler perc y"></ul>
 </div>
-
 </body>
 </html>

@@ -7,35 +7,73 @@
 /* Flag Variables */
 var unit = '%';
 var measure = 'drag';
-var imgWidth, imgHeight;
-var tagScript, mapScript;
+var imgWidth, imgHeight, filepath;
+var tagScript = '';
+var mapScript = '';
+var isIE = false || !!document.documentMode;
+var phase = 0;
+var editing = false;
 
 /* Event Bindings */
 $(document)
+	.on('click', '#canvas', readyState)
 	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '.btn-lb-open', openLightbox)
 	.on('click', '.btn-lb-close', closeLightbox)
 	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-lb-load', loadImage)
 	.on('click', '.btn-lb-clear', clearWorkspace)
+	.on('click', '.map', editMap)
+	.on('click', '.btn-map-remove', removeMap)
+	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
+	.on('mousemove', '#imgwrap', moveGrid)
 	.on('change', '#input-img-local', parsePath)
 	.on('keydown', bindKeys);
 
-$(window).on('load', setup);
+$(window).on('load', setup); // Initialize
 
 /* Functions */
 function loadImage(){
-	if ($(this).parents('#lightbox').hasClass('url')) $('#srcimg').attr('src', $('#input-img-url').val());
-	else $('#srcimg').attr('src', filepath);
-	$('#srcimg').on('load', setup);
+	if ($(this).parents('#lightbox').hasClass('url')) $('#img').attr('src', $('#input-img-url').val());
+	else $('#img').attr('src', filepath);
+	$('#img').on('load', setup);
 	closeLightbox();
+	return false;
+}
+
+function readyState(e){
+	if(!$(e.target).hasClass('map')){
+		$('body').removeClass('editing');
+		$('.map').removeClass('active').draggable('destroy').resizable('destroy');
+	}	
+}
+
+function moveGrid(e){
+	var x = e.pageX - 20;
+	var y = e.pageY - 54;	
+	$('.axis.x').css({ left: x });
+	$('.axis.y').css({ top: y });
+}
+
+function toggleGrid(e){
+	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $('.axis').addClass('active');
+	else $('.axis').removeClass('active');
+}
+
+function editMap(){
+	$(this).addClass('active').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
+	$('body').addClass('editing');
+}
+
+function removeMap(){
+	if(confirm('Do you really want to remove this map element?')) $('.map.active').remove();
 	return false;
 }
 
 function setup(){
 	clearWorkspace();
-	imgWidth = $('#srcimg').width();
-	imgHeight = $('#srcimg').height();
+	imgWidth = $('#img').width();
+	imgHeight = $('#img').height();
 	$('.ruler.x').css({ width: imgWidth });
 	$('.ruler.y').css({ height: imgHeight });
 	$('#navbar').css({ maxWidth: imgWidth + 20 });
@@ -49,12 +87,14 @@ function clearWorkspace(){
 
 function parsePath(e) {
 	var URL = window.webkitURL || window.URL;
-    filepath = URL.createObjectURL(e.target.files[0]);
+    filepath = URL.createObjectURL(e.target.files[0]);    
+    $('#label-img-local > p').text('File loaded');
+    $('#label-img-local').addClass('active');
 }
 
 function drawRuler(){
 	$('.ruler').empty();
-	$('#btn-toggle-unit').text(unit);	
+	$('#btn-toggle-unit').text(unit);
 	if (unit == '%'){
 		$('.ruler').removeClass('px').addClass('perc');
 		for(var i=0; i<21; i++){
@@ -69,7 +109,7 @@ function drawRuler(){
 		}
 		for(var i=0; i<imgHeight/10+1; i++){
 			if (i%10 == 0) $('.ruler.y').append('<li class="long"><span>'+ i*10 +'px</span></li>');
-			else $('.ruler.y').append('<li></li>');			
+			else $('.ruler.y').append('<li></li>');
 		}
 	}
 }
@@ -92,13 +132,13 @@ function openLightbox(){
 	var json = window[$(this).data('json') + 'Json'];
 	var lb = '<div id="lb-title"><p>' +
 		json.title + '</p><a class="btn-lb-close" href="#">×</a></div><div id="lb-content">' +
-		json.content + '</div><div id="lb-btnset" class="' + 
-		json.btnSet + '"><a id="btn-lb-no" class="' + 
-		json.btnNoClass + '" data-json="' + 
-		json.btnNoJson + '" href="#">' + 
-		json.btnNo + '</a><a id="btn-lb-yes" class="' + 
-		json.btnYesClass + '" data-json="' + 
-		json.btnYesJson + '" href="#">' + 
+		json.content + '</div><div id="lb-btnset" class="' +
+		json.btnSet + '"><a id="btn-lb-no" class="' +
+		json.btnNoClass + '" data-json="' +
+		json.btnNoJson + '" href="#">' +
+		json.btnNo + '</a><a id="btn-lb-yes" class="' +
+		json.btnYesClass + '" data-json="' +
+		json.btnYesJson + '" href="#">' +
 		json.btnYes + '</a></div>';
 	closeLightbox();
 	$('#lightbox').addClass($(this).data('json')).html(lb);
@@ -121,15 +161,16 @@ function bindKeys(e){ // Key Bindings
 			if ($('body').hasClass('dimmed')) closeLightbox();
 			break;
 		case 46: // DEL
+			if ($('body').hasClass('editing')) removeMap();
 			break;
 		case 67: // C
-			if (e.ctrlKey) console.log('copy');
-			break;
-		case 83: // S
-			if (!$('body').hasClass('dimmed')) unitToggle();
+			if (e.ctrlKey && $('body').hasClass('editing')) console.log('copy');
 			break;
 		case 86: // V
-			if (e.ctrlKey) console.log('paste');
+			if (e.ctrlKey && !$('body').hasClass('editing')) console.log('paste');
+			break;
+		case 83: // S
+			if (!$('body').hasClass('dimmed')) toggleUnit();
 			break;
 	}
 }
@@ -137,7 +178,7 @@ function bindKeys(e){ // Key Bindings
 /* Lightbox JSON Data */
 var codeJson = {
 	title		: 'LOAD MAP ELEMENTS FROM SOURCE CODE',
-	content		: '<textarea id="input-code" rows="6"></textarea><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
+	content		: '<textarea id="input-code" rows="6"></textarea><p class="red">&#9888; Importing source code will remove every map elements and links.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -159,7 +200,7 @@ var urlJson = {
 };
 var localJson = {
 	title		: 'LOAD IMAGE FROM LOCAL STORAGE',
-	content		: '<input id="input-img-local" type="file"><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
+	content		: '<label id="label-img-local"><input id="input-img-local" type="file"><p>' + (isIE ? 'Click to load an image' : 'Drag &amp; drop or click to load') + '</p></label><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -181,7 +222,7 @@ var clearJson = {
 };
 var generateJson = {
 	title		: 'GENERATE SOURCE CODE',
-	content		: '<a class="btn-lb-open" data-json="tag" href="#">A TAG TYPE (PERCENT, MOBILE OK)</a><a class="btn-lb-open" data-json="map" href="#">IMAGE MAP TYPE (PIXELS, PC ONLY)</a>',
+	content		: '<a class="btn-lb-open" data-json="tag" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="map" href="#">Classic Image Map Style (px, PC Only)</a>',
 	btnSet		: 'onebtn',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
