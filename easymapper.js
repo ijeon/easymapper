@@ -4,19 +4,25 @@
  * Browser Support: IE10+, Chrome (PC Only)
  * https://github.com/inpyodev/easymapper */
 
-/* Flag Variables */
-var unit = '%';
-var measure = 'drag';
-var imgWidth, imgHeight, filepath;
-var tagScript = '';
-var mapScript = '';
-var isIE = false || !!document.documentMode;
-var phase = 0;
-var editing = false;
+/* Global Variables */
+var unit = '%'; // Ruler Unit (%, px)
+var measure = 'drag'; // Measure Type (drag, click)
+var imgWidth, imgHeight, filepath; // Source Image Properties
+var tagScript, mapScript; // Generated Code
+var isIE = false || !!document.documentMode; // IE Detection
+var phase = 0; // Grid Drawing Phase (0: None, 1: Start, 2: End)
+var editing = false; // Map Element Editing Status
+
+function test(){
+	console.log('test')
+	var start = { x:100, y:600 };
+	var end = { x:220, y:700 };
+	createMap(start, end)
+}
 
 /* Event Bindings */
 $(document)
-	.on('click', '#canvas', readyState)
+	.on('click', '#test', test)
 	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '.btn-lb-open', openLightbox)
 	.on('click', '.btn-lb-close', closeLightbox)
@@ -27,51 +33,15 @@ $(document)
 	.on('click', '.btn-map-remove', removeMap)
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
 	.on('mousemove', '#imgwrap', moveGrid)
+	.on('mouseenter', '.btn-map-resize', resizeMap)
 	.on('change', '#input-img-local', parsePath)
 	.on('keydown', bindKeys);
-
 $(window).on('load', setup); // Initialize
 
 /* Functions */
-function loadImage(){
-	if ($(this).parents('#lightbox').hasClass('url')) $('#img').attr('src', $('#input-img-url').val());
-	else $('#img').attr('src', filepath);
-	$('#img').on('load', setup);
-	closeLightbox();
-	return false;
-}
-
-function readyState(e){
-	if(!$(e.target).hasClass('map')){
-		$('body').removeClass('editing');
-		$('.map').removeClass('active').draggable('destroy').resizable('destroy');
-	}	
-}
-
-function moveGrid(e){
-	var x = e.pageX - 20;
-	var y = e.pageY - 54;	
-	$('.axis.x').css({ left: x });
-	$('.axis.y').css({ top: y });
-}
-
-function toggleGrid(e){
-	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $('.axis').addClass('active');
-	else $('.axis').removeClass('active');
-}
-
-function editMap(){
-	$(this).addClass('active').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
-	$('body').addClass('editing');
-}
-
-function removeMap(){
-	if(confirm('Do you really want to remove this map element?')) $('.map.active').remove();
-	return false;
-}
-
-function setup(){
-	clearWorkspace();
+/** Initializing Workspace **/
+function setup(){ // Setup Workspace
+	/*clearWorkspace();*/
 	imgWidth = $('#img').width();
 	imgHeight = $('#img').height();
 	$('.ruler.x').css({ width: imgWidth });
@@ -79,20 +49,14 @@ function setup(){
 	$('#navbar').css({ maxWidth: imgWidth + 20 });
 	drawRuler();
 }
-
-function clearWorkspace(){
-	
+function clearWorkspace(){ // Clear Workspace
+	$('#maps').empty();
+	tagScript = '';
+	mapScript = '';
+	closeLightbox();
 	return false;
 }
-
-function parsePath(e) {
-	var URL = window.webkitURL || window.URL;
-    filepath = URL.createObjectURL(e.target.files[0]);    
-    $('#label-img-local > p').text('File loaded');
-    $('#label-img-local').addClass('active');
-}
-
-function drawRuler(){
+function drawRuler(){ // Draw Rulers
 	$('.ruler').empty();
 	$('#btn-toggle-unit').text(unit);
 	if (unit == '%'){
@@ -113,23 +77,65 @@ function drawRuler(){
 		}
 	}
 }
+function loadImage(){ // Load Source Image
+	var imgsrc = $(this).parents('#lightbox').hasClass('url') ? $('#input-img-url').val() : filepath;	
+	$('#img').attr('src', imgsrc).on('load', setup);
+	closeLightbox();
+	return false;
+}
+function parsePath(e){ // Get Source Image Filepath
+	var URL = window.webkitURL || window.URL;
+    filepath = URL.createObjectURL(e.target.files[0]);    
+    $('#label-img-local > p').text('File loaded');
+    $('#label-img-local').addClass('active');
+}
 
-function selectUnitMeasure(){
-	window[$(this).closest('ul').attr('class')] = $(this).text().toLowerCase();
-	$(this).parent().addClass('active').siblings().removeClass('active');
-	if ($(this).closest('ul').attr('class') == 'unit') drawRuler();
+/** Grid **/
+function moveGrid(e){ // Move Grid
+	var x = e.pageX - 20;
+	var y = e.pageY - 54;	
+	$('.axis.x').css({ left: x });
+	$('.axis.y').css({ top: y });
+}
+function toggleGrid(e){ // Show & Hide Grid
+	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $('.axis').addClass('active');
+	else $('.axis').removeClass('active');
+}
+
+/** Map Elements **/
+function createMap(start, end){	
+	var number = $('.map').length + 1;
+	var width = Math.abs(start.x - end.x);
+	var height = Math.abs(start.y - end.y);
+	var top = Math.min(start.y, end.y);
+	var left = Math.min(start.x, end.x);
+	var el = '<li id="map_' + 
+		number + '" class="map unlinked" style="width:' +
+		width + 'px; height:' +
+		height + 'px; top:' +
+		top + 'px; left:' +
+		left + 'px"><a class="btn-map-remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
+	$('#maps').append(el);
+
+	console.log($('#map_'+number).css('width'))
+}
+function editMap(){
+	$(this).addClass('active').draggable({ containment: '#canvas' });
+	$('body').addClass('editing');
+}
+function resizeMap(e){
+	$(this).parent().resizable({ containment: '#canvas' });
+	return false;
+}
+function removeMap(){
+	if(confirm('Do you really want to remove this map element?')) $('.map.active').remove();
 	return false;
 }
 
-function toggleUnit(){
-	unit = (unit == '%') ? 'px' : '%';
-	$('.unit').find('li').toggleClass('active');
-	drawRuler();
-	return false;
-}
-
-function openLightbox(){
-	var json = window[$(this).data('json') + 'Json'];
+/** Lightbox **/
+function openLightbox(){ // Create & Open Lightbox
+	var jsonId = $(this).data('json');
+	var json = window[jsonId + 'Json'];
 	var lb = '<div id="lb-title"><p>' +
 		json.title + '</p><a class="btn-lb-close" href="#">×</a></div><div id="lb-content">' +
 		json.content + '</div><div id="lb-btnset" class="' +
@@ -141,44 +147,63 @@ function openLightbox(){
 		json.btnYesJson + '" href="#">' +
 		json.btnYes + '</a></div>';
 	closeLightbox();
-	$('#lightbox').addClass($(this).data('json')).html(lb);
+	$('#lightbox').addClass(jsonId).html(lb);
 	$('body').addClass('dimmed');
 	return false;
 }
-
-function closeLightbox(){
+function closeLightbox(){ // Close & Reset Lightbox
 	$('body').removeClass('dimmed');
 	$('#lightbox').empty();
 	$('#lightbox').removeClass();
 	return false;
 }
 
+/** General Control **/
+function selectUnitMeasure(){ // Set Unit & Measure Type
+	window[$(this).closest('ul').attr('class')] = $(this).text().toLowerCase();
+	$(this).parent().addClass('active').siblings().removeClass('active');
+	if ($(this).closest('ul').attr('class') == 'unit') drawRuler();
+	return false;
+}
+function toggleUnit(){ // Toggle Scale Unit
+	unit = (unit == '%') ? 'px' : '%';
+	$('.unit').find('li').toggleClass('active');
+	drawRuler();
+	return false;
+}
 function bindKeys(e){ // Key Bindings
 	switch (e.which){
-		case 13: // Enter
+		case 13: // Enter: Submit Input Value or Edit Map Area Link
 			break;
-		case 27: // ESC
+		case 27: // ESC: Close Lightbox
 			if ($('body').hasClass('dimmed')) closeLightbox();
+			break; 
+		case 46: // DEL: Remove Selected Map Element
+			if ($('body').hasClass('editing') && !$('body').hasClass('dimmed')) removeMap();
 			break;
-		case 46: // DEL
-			if ($('body').hasClass('editing')) removeMap();
+		case 67: // C: (Ctrl+C) Copy Selected Map Element
+			if ((e.ctrlKey && $('body').hasClass('editing')) && !$('body').hasClass('dimmed')) console.log('copy');
 			break;
-		case 67: // C
-			if (e.ctrlKey && $('body').hasClass('editing')) console.log('copy');
-			break;
-		case 86: // V
+		case 86: // V: (Ctrl+V) Paste Map Element 
 			if (e.ctrlKey && !$('body').hasClass('editing')) console.log('paste');
 			break;
-		case 83: // S
+		case 76: // L: Show Map Elements With No Link
+			break;
+		case 85: // U: Toggle Scale Unit
 			if (!$('body').hasClass('dimmed')) toggleUnit();
+			break;
+		case 112: // F1: Keyboard Shortcuts
+			console.log('f1');
+			return false;
 			break;
 	}
 }
 
 /* Lightbox JSON Data */
-var codeJson = {
+/** Navigation Bar **/
+var codeJson = { // SOURCE - CODE
 	title		: 'LOAD MAP ELEMENTS FROM SOURCE CODE',
-	content		: '<textarea id="input-code" rows="6"></textarea><p class="red">&#9888; Importing source code will remove every map elements and links.</p>',
+	content		: '<textarea id="input-code" rows="6" spellcheck="false"></textarea><p class="red">&#9888; Importing source code will remove every map elements and links.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -187,9 +212,9 @@ var codeJson = {
 	btnYesJson	: '',
 	btnYes		: 'IMPORT &amp; PARSE'
 };
-var urlJson = {
+var urlJson = { // SOURCE - URL
 	title		: 'LOAD IMAGE FROM SOURCE URL',
-	content		: '<input id="input-img-url" type="text" value="http://"><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
+	content		: '<input id="input-img-url" type="text" value="http://" spellcheck="false"><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -198,7 +223,7 @@ var urlJson = {
 	btnYesJson	: '',
 	btnYes		: 'LOAD'
 };
-var localJson = {
+var localJson = { // SOURCE - LOCAL
 	title		: 'LOAD IMAGE FROM LOCAL STORAGE',
 	content		: '<label id="label-img-local"><input id="input-img-local" type="file"><p>' + (isIE ? 'Click to load an image' : 'Drag &amp; drop or click to load') + '</p></label><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
 	btnSet		: '',
@@ -209,7 +234,7 @@ var localJson = {
 	btnYesJson	: '',
 	btnYes		: 'LOAD'
 };
-var clearJson = {
+var clearJson = { // CLEAR
 	title		: '&#9888; WARNING',
 	content		: '<p>Do you really want to remove every map elements and links from the workspace?</p>',
 	btnSet		: '',
@@ -220,7 +245,7 @@ var clearJson = {
 	btnYesJson	: '',
 	btnYes		: 'YES'
 };
-var generateJson = {
+var generateJson = { // GENERATE
 	title		: 'GENERATE SOURCE CODE',
 	content		: '<a class="btn-lb-open" data-json="tag" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="map" href="#">Classic Image Map Style (px, PC Only)</a>',
 	btnSet		: 'onebtn',
@@ -231,29 +256,7 @@ var generateJson = {
 	btnYesJson	: '',
 	btnYes		: ''
 };
-var helpJson = {
-	title		: 'EASY MAPPER (v20180206)',
-	content		: '<p>Author: Inpyo Jeon (inpyodev@gmail.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
-	btnSet		: '',
-	btnNoClass	: 'btn-lb-close',
-	btnNoJson	: '',
-	btnNo		: 'CLOSE',
-	btnYesClass	: 'btn-lb-open',
-	btnYesJson	: 'shortcut',
-	btnYes		: 'ⓘ KEY SHORTCUTS'
-};
-var shortcutJson = {
-	title		: 'KEYBOARD SHORTCUTS',
-	content		: '',
-	btnSet		: 'onebtn',
-	btnNoClass	: 'btn-lb-close',
-	btnNoJson	: '',
-	btnNo		: 'CLOSE',
-	btnYesClass	: '',
-	btnYesJson	: '',
-	btnYes		: ''
-};
-var tagJson = {
+var tagJson = { // GENERATE - Responsive A Tag Style
 	title		: 'A TAG TYPE SOURCE CODE',
 	content		: '<p>' + tagScript + '</p>',
 	btnSet		: '',
@@ -264,7 +267,7 @@ var tagJson = {
 	btnYesJson	: '',
 	btnYes		: 'COPY TO CLIPBOARD'		
 };
-var mapJson = {
+var mapJson = { // GENERATE - Classic Image Map Style
 	title		: 'IMAGE MAP TYPE SOURCE CODE',
 	content		: '<p>' + mapScript + '</p>',
 	btnSet		: '',
@@ -274,4 +277,38 @@ var mapJson = {
 	btnYesClass	: 'btn-clipboard',
 	btnYesJson	: '',
 	btnYes		: 'COPY TO CLIPBOARD'		
+};
+var helpJson = { // ?
+	title		: 'EASY MAPPER (v20180206)',
+	content		: '<p>Author: Inpyo Jeon (inpyodev@gmail.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CLOSE',
+	btnYesClass	: 'btn-lb-open',
+	btnYesJson	: 'shortcut',
+	btnYes		: 'ⓘ KEY SHORTCUTS'
+};
+var shortcutJson = { // ? - KEY SHORTCUTS
+	title		: 'KEYBOARD SHORTCUTS',
+	content		: '',
+	btnSet		: 'onebtn',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CLOSE',
+	btnYesClass	: '',
+	btnYesJson	: '',
+	btnYes		: ''
+};
+/** Map Elements **/
+var linkJson = { // Link Edit
+	title		: 'EDIT MAP AREA LINK',
+	content		: '',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-link',
+	btnYesJson	: '',
+	btnYes		: 'CONFIRM'
 };
