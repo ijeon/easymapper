@@ -12,28 +12,30 @@ var tagScript, mapScript; // Generated Code
 var isIE = false || !!document.documentMode; // IE Detection
 var phase = 0; // Grid Drawing Phase (0: None, 1: Start, 2: End)
 var editing = false; // Map Element Editing Status
+var x, y; // Grid Coords
+var start, end; // Map Coords
 
+$(document)
+	.on('click', '#test', test);
 function test(){
 	console.log('test')
 	var start = { x:100, y:600 };
 	var end = { x:220, y:700 };
-	createMap(start, end)
+	createMap(start, end);
 }
 
 /* Event Bindings */
 $(document)
-	.on('click', '#test', test)
-	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '.btn-lb-open', openLightbox)
 	.on('click', '.btn-lb-close', closeLightbox)
-	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-lb-load', loadImage)
 	.on('click', '.btn-lb-clear', clearWorkspace)
-	.on('click', '.map', editMap)
+	.on('click', '.btn-select', selectUnitMeasure)
+	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-map-remove', removeMap)
+	.on('mousedown mouseup click', '#imgwrap', drawMap)
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
 	.on('mousemove', '#imgwrap', moveGrid)
-	.on('mouseenter', '.btn-map-resize', resizeMap)
 	.on('change', '#input-img-local', parsePath)
 	.on('keydown', bindKeys);
 $(window).on('load', setup); // Initialize
@@ -92,18 +94,46 @@ function parsePath(e){ // Get Source Image Filepath
 
 /** Grid **/
 function moveGrid(e){ // Move Grid
-	var x = e.pageX - 20;
-	var y = e.pageY - 54;	
-	$('.axis.x').css({ left: x });
-	$('.axis.y').css({ top: y });
+	x = e.pageX - 20;
+	y = e.pageY - 54;
+	$('.axis.x.active').css({ left: x });
+	$('.axis.y.active').css({ top: y });
+	setCoords();
 }
 function toggleGrid(e){ // Show & Hide Grid
-	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $('.axis').addClass('active');
-	else $('.axis').removeClass('active');
+	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $(this).addClass('active');
+	else $(this).removeClass('active');
+}
+function setCoords(){ // Set & Show Coords
+	var xp = (x / imgWidth * 100).toFixed(2);
+	var yp = (y / imgWidth * 100).toFixed(2);
+	var coords = (unit == '%') ? xp +'%, '+ yp +'%' : x +'px, '+ y +'px';
+	$('#coords').css({ left: x + 1, top: y + 1 }).text(coords);
+	if (x + $('#coords').outerWidth() > imgWidth) $('#coords').css({ left: x - $('#coords').outerWidth() });
+	if (y + $('#coords').outerHeight() > imgHeight) $('#coords').css({ top: y - $('#coords').outerHeight() });
 }
 
 /** Map Elements **/
-function createMap(start, end){	
+function drawMap(e){
+	if (phase == 0){
+		if ((measure == 'drag' && e.type == 'mousedown') || (measure == 'click' && e.type == 'click')){
+			start = { x: x, y: y };
+			$('.axis.a').removeClass('active');
+			phase = 1;
+			console.log(start.x)
+		}
+	} else if (phase == 1){
+		if ((measure == 'drag' && e.type == 'mouseup') || (measure == 'click' && e.type == 'click')){
+			end = { x: x, y: y };
+			$('.axis.a').addClass('active');
+			phase = 0;
+			console.log(end.x)
+		}
+		createMap(start, end);
+	}
+	return false;
+}
+function createMap(start, end){
 	var number = $('.map').length + 1;
 	var width = Math.abs(start.x - end.x);
 	var height = Math.abs(start.y - end.y);
@@ -114,21 +144,13 @@ function createMap(start, end){
 		width + 'px; height:' +
 		height + 'px; top:' +
 		top + 'px; left:' +
-		left + 'px"><a class="btn-map-remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
+		left + 'px"><span class="mapid">' +
+		number + '</span><a class="btn-map-remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
 	$('#maps').append(el);
-
-	console.log($('#map_'+number).css('width'))
-}
-function editMap(){
-	$(this).addClass('active').draggable({ containment: '#canvas' });
-	$('body').addClass('editing');
-}
-function resizeMap(e){
-	$(this).parent().resizable({ containment: '#canvas' });
-	return false;
+	$('#map_'+number).draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
 }
 function removeMap(){
-	if(confirm('Do you really want to remove this map element?')) $('.map.active').remove();
+	if(confirm('Do you really want to remove this map element?')) $(this).parent().remove();
 	return false;
 }
 
@@ -169,6 +191,7 @@ function toggleUnit(){ // Toggle Scale Unit
 	unit = (unit == '%') ? 'px' : '%';
 	$('.unit').find('li').toggleClass('active');
 	drawRuler();
+	setCoords();
 	return false;
 }
 function bindKeys(e){ // Key Bindings

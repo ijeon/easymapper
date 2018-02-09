@@ -77,24 +77,19 @@
 		<li>
 			<a class="btn-lb-open" data-json="help" href="#">?</a>
 		</li>
-	</ul>
+	</ul>x
 </div>
 
 <!-- Workspace -->
 <div id="workspace">
 	<div id="canvas">
-		<ul id="maps">
-			<li class="map" style="width:100px; height:100px; top:120px">
-				<a class="btn-map-remove" href="#">×</a>
-				<a class="btn-map-resize" href="#">⤡</a>
-				<a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a>
-			</li>
-		</ul>
+		<ul id="maps"></ul>
 		<div id="imgwrap">
-			<div class="axis x a"></div>
-			<div class="axis y a"></div>
-			<div class="axis x b"></div>
-			<div class="axis y b"></div>
+			<div class="axis x a active"></div>
+			<div class="axis y a active"></div>
+			<div class="axis x b active"></div>
+			<div class="axis y b active"></div>
+			<span id="coords"></span>
 			<img id="img" src="sampleimg.png">
 		</div>		
 	</div>
