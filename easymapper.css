@@ -91,7 +91,8 @@ a { text-decoration:none; } ul { list-style:none; } .red { color:#dd0000; }
 
 /* Map Elements */
 #maps { position:absolute; top:0; left:0; z-index:30; }
-.map { position:absolute !important;border:1px dashed #0b6fde; background:rgba(11,111,222,.5); display:block; cursor:move; }
+.map { position:absolute !important; border:1px dashed #0b6fde; background:rgba(11,111,222,.5); display:block; cursor:move; }
+.map.selected { border:1px dashed #fff; }
 .map.linked { border:1px solid #0b6fde; }
 .map.error { border:1px solid #de0b0b; background:rgba(222,11,11,.5); }
 .btn-map-resize { position:absolute; bottom:0; right:0; padding:2px 4px; font-size:16px; color:#fff; cursor:move; }

@@ -12,7 +12,7 @@ var tagScript, mapScript; // Generated Code
 var isIE = false || !!document.documentMode; // IE Detection
 var phase = 0; // Grid Drawing Phase (0: None, 1: Start, 2: End)
 var editing = false; // Map Element Editing Status
-var x, y; // Grid Coords
+var x, y; // Grid Position
 var start, end; // Map Coords
 
 $(document)
@@ -32,10 +32,11 @@ $(document)
 	.on('click', '.btn-lb-clear', clearWorkspace)
 	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '#btn-toggle-unit', toggleUnit)
-	.on('click', '.btn-map-remove', removeMap)
-	.on('mousedown mouseup click', '#imgwrap', drawMap)
+	.on('click', '.btn-lb-removemap', removeMap)
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
 	.on('mousemove', '#imgwrap', moveGrid)
+	.on('mousedown', '.map', selectMap)
+	.on('mousedown mouseup click', '#imgwrap', drawMap)
 	.on('change', '#input-img-local', parsePath)
 	.on('keydown', bindKeys);
 $(window).on('load', setup); // Initialize
@@ -43,7 +44,7 @@ $(window).on('load', setup); // Initialize
 /* Functions */
 /** Initializing Workspace **/
 function setup(){ // Setup Workspace
-	/*clearWorkspace();*/
+	clearWorkspace();
 	imgWidth = $('#img').width();
 	imgHeight = $('#img').height();
 	$('.ruler.x').css({ width: imgWidth });
@@ -96,13 +97,19 @@ function parsePath(e){ // Get Source Image Filepath
 function moveGrid(e){ // Move Grid
 	x = e.pageX - 20;
 	y = e.pageY - 54;
-	$('.axis.x.active').css({ left: x });
-	$('.axis.y.active').css({ top: y });
+	setGrid();
 	setCoords();
 }
 function toggleGrid(e){ // Show & Hide Grid
 	if (e.type == 'mouseenter' && $('.ui-draggable-dragging').length + $('.ui-resizable-resizing').length == 0) $(this).addClass('active');
-	else $(this).removeClass('active');
+	else {
+		$(this).removeClass('active');
+		resetGrid();
+	}
+}
+function setGrid(){ // Set Grid
+	$('.axis.x.active').css({ left: x });
+	$('.axis.y.active').css({ top: y });
 }
 function setCoords(){ // Set & Show Coords
 	var xp = (x / imgWidth * 100).toFixed(2);
@@ -112,31 +119,38 @@ function setCoords(){ // Set & Show Coords
 	if (x + $('#coords').outerWidth() > imgWidth) $('#coords').css({ left: x - $('#coords').outerWidth() });
 	if (y + $('#coords').outerHeight() > imgHeight) $('#coords').css({ top: y - $('#coords').outerHeight() });
 }
+function resetGrid(){ // Reset Grid
+	$('.axis.a').addClass('active');
+	phase = 0;
+	setGrid();
+	return false;
+}
 
 /** Map Elements **/
-function drawMap(e){
+function drawMap(e){ // Drawing Map Element
 	if (phase == 0){
 		if ((measure == 'drag' && e.type == 'mousedown') || (measure == 'click' && e.type == 'click')){
+			$('.map').removeClass('selected');
 			start = { x: x, y: y };
 			$('.axis.a').removeClass('active');
 			phase = 1;
-			console.log(start.x)
 		}
 	} else if (phase == 1){
 		if ((measure == 'drag' && e.type == 'mouseup') || (measure == 'click' && e.type == 'click')){
-			end = { x: x, y: y };
-			$('.axis.a').addClass('active');
-			phase = 0;
-			console.log(end.x)
+			if (Math.abs(start.x - x) > 10 && Math.abs(start.y - y) > 10){ // Prevent False Clicking
+				end = { x: x, y: y };
+				$('.axis.a').addClass('active');
+				phase = 0;
+				createMap(start, end);
+			} else resetGrid();
 		}
-		createMap(start, end);
 	}
 	return false;
 }
-function createMap(start, end){
+function createMap(start, end){ // Create A New Map Element
 	var number = $('.map').length + 1;
-	var width = Math.abs(start.x - end.x);
-	var height = Math.abs(start.y - end.y);
+	var width = Math.abs(start.x - end.x) - 1; // Box-Sizing Fix -1px
+	var height = Math.abs(start.y - end.y) - 1;
 	var top = Math.min(start.y, end.y);
 	var left = Math.min(start.x, end.x);
 	var el = '<li id="map_' + 
@@ -145,18 +159,23 @@ function createMap(start, end){
 		height + 'px; top:' +
 		top + 'px; left:' +
 		left + 'px"><span class="mapid">' +
-		number + '</span><a class="btn-map-remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
+		number + '</span><a class="btn-map-remove btn-lb-open" data-json="remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
 	$('#maps').append(el);
-	$('#map_'+number).draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
+	$('#map_'+number).addClass('selected').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
 }
-function removeMap(){
-	if(confirm('Do you really want to remove this map element?')) $(this).parent().remove();
+function removeMap(){ // Remove Selected Map Element
+	$('.map.selected').remove();
+	closeLightbox();
 	return false;
+}
+function selectMap(){
+	$('.map').removeClass('selected');
+	$(this).addClass('selected');
 }
 
 /** Lightbox **/
-function openLightbox(){ // Create & Open Lightbox
-	var jsonId = $(this).data('json');
+function openLightbox(jsonId){ // Create & Open Lightbox
+	if(typeof jsonId == 'object') jsonId = $(this).data('json');
 	var json = window[jsonId + 'Json'];
 	var lb = '<div id="lb-title"><p>' +
 		json.title + '</p><a class="btn-lb-close" href="#">×</a></div><div id="lb-content">' +
@@ -195,28 +214,33 @@ function toggleUnit(){ // Toggle Scale Unit
 	return false;
 }
 function bindKeys(e){ // Key Bindings
-	switch (e.which){
-		case 13: // Enter: Submit Input Value or Edit Map Area Link
+	var isDialog = $('body').hasClass('dimmed');
+	var isSelect = !isDialog && $('.map.selected').length > 0;
+	switch (e.which){ 
+		case 13: // Enter: Submit, Edit Map Area Link
+			if (isDialog) $('#btn-lb-yes').trigger('click');
+			if (isSelect) openLightbox('link');
 			break;
-		case 27: // ESC: Close Lightbox
-			if ($('body').hasClass('dimmed')) closeLightbox();
+		case 27: // ESC: Close Lightbox, Cancel Map Drawing
+			if (isDialog) closeLightbox();
+			if (phase == 1) resetGrid();
 			break; 
 		case 46: // DEL: Remove Selected Map Element
-			if ($('body').hasClass('editing') && !$('body').hasClass('dimmed')) removeMap();
+			if (isSelect) openLightbox('remove');
 			break;
 		case 67: // C: (Ctrl+C) Copy Selected Map Element
-			if ((e.ctrlKey && $('body').hasClass('editing')) && !$('body').hasClass('dimmed')) console.log('copy');
+			if (e.ctrlKey && isSelect) console.log('copy');
 			break;
 		case 86: // V: (Ctrl+V) Paste Map Element 
-			if (e.ctrlKey && !$('body').hasClass('editing')) console.log('paste');
+			if (e.ctrlKey && !isDialog) console.log('paste');
 			break;
 		case 76: // L: Show Map Elements With No Link
 			break;
 		case 85: // U: Toggle Scale Unit
-			if (!$('body').hasClass('dimmed')) toggleUnit();
+			if (!isDialog) toggleUnit();
 			break;
 		case 112: // F1: Keyboard Shortcuts
-			console.log('f1');
+			openLightbox('help');
 			return false;
 			break;
 	}
@@ -335,3 +359,14 @@ var linkJson = { // Link Edit
 	btnYesJson	: '',
 	btnYes		: 'CONFIRM'
 };
+var removeJson = { // Remove Map Element
+	title		: '&#9888; WARNING',
+	content		: '<p>Do you really want to remove this map element from the workspace?</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'NO',
+	btnYesClass	: 'btn-lb-removemap',
+	btnYesJson	: '',
+	btnYes		: 'YES'
+}
