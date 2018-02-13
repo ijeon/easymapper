@@ -98,4 +98,9 @@ a { text-decoration:none; } ul { list-style:none; } .red { color:#dd0000; }
 .btn-map-resize { position:absolute; bottom:0; right:0; padding:2px 4px; font-size:16px; color:#fff; cursor:move; }
 .btn-map-remove { position:absolute; top:0; right:0; padding:0 5px 2px; font-size:20px; color:#fff; }
 .btn-map-link { font-size:16px; color:#fff; position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%, -50%); transform:translate(-50%, -50%); }
-.mapid { font-size:12px; color:#fff; display:inline-block; padding:5px; position:absolute; }
+.mapid { font-size:12px; color:#fff; display:inline-block; padding:5px; position:absolute; top:0; left:0; }
+.map.small .mapid { top:-23px; background:#000; }
+.map.small .btn-map-remove { top:-23px; background:#000; }
+.map.small .btn-map-link { left:-21px; top:0; padding:3px 2px; background:#000; -webkit-transform:none; transform:none; }
+
+

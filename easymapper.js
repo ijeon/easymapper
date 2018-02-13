@@ -14,14 +14,12 @@ var phase = 0; // Grid Drawing Phase (0: None, 1: Start, 2: End)
 var editing = false; // Map Element Editing Status
 var x, y; // Grid Position
 var start, end; // Map Coords
+var mapEl = [];
 
 $(document)
 	.on('click', '#test', test);
 function test(){
-	console.log('test')
-	var start = { x:100, y:600 };
-	var end = { x:220, y:700 };
-	createMap(start, end);
+	$('.map').addClass('small');
 }
 
 /* Event Bindings */
@@ -33,6 +31,8 @@ $(document)
 	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-lb-removemap', removeMap)
+	.on('dblclick', '.map', function(){ openLightbox('link'); })
+	.on('resizestop dragstop', '.map', editMap)	
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
 	.on('mousemove', '#imgwrap', moveGrid)
 	.on('mousedown', '.map', selectMap)
@@ -54,6 +54,7 @@ function setup(){ // Setup Workspace
 }
 function clearWorkspace(){ // Clear Workspace
 	$('#maps').empty();
+	mapEl = [];
 	tagScript = '';
 	mapScript = '';
 	closeLightbox();
@@ -148,27 +149,46 @@ function drawMap(e){ // Drawing Map Element
 	return false;
 }
 function createMap(start, end){ // Create A New Map Element
-	var number = $('.map').length + 1;
+	var mapId = mapEl.length;
 	var width = Math.abs(start.x - end.x) - 1; // Box-Sizing Fix -1px
 	var height = Math.abs(start.y - end.y) - 1;
 	var top = Math.min(start.y, end.y);
 	var left = Math.min(start.x, end.x);
 	var el = '<li id="map_' + 
-		number + '" class="map unlinked" style="width:' +
-		width + 'px; height:' +
-		height + 'px; top:' +
+	mapId + '" class="map unlinked" style="top:' +
 		top + 'px; left:' +
-		left + 'px"><span class="mapid">' +
-		number + '</span><a class="btn-map-remove btn-lb-open" data-json="remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
+		left + 'px; width:' +
+		width + 'px; height:' +
+		height + 'px"><span class="mapid">' +
+		parseInt(mapId+1) + '</span><a class="btn-map-remove btn-lb-open" data-json="remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
 	$('#maps').append(el);
-	$('#map_'+number).addClass('selected').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas' });
+	$('#map_'+mapId).addClass('selected').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas', minWidth: 20, minHeight: 20 });
+	mapEl.push([top, left, width, height]);
+	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
+	else $('.map.selected').removeClass('small');
+}
+function editMap(){ // Edit Map Element Size & Position Callback
+	var mapId = $('.map.selected').find('.mapid').text() - 1;
+	var top = parseInt($('.map.selected').css('top'));
+	var left = parseInt($('.map.selected').css('left'));
+	var width = parseInt($('.map.selected').css('width'));
+	var height = parseInt($('.map.selected').css('height'));
+	mapEl[mapId] = [top, left, width, height];
+	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
+	else $('.map.selected').removeClass('small');
 }
 function removeMap(){ // Remove Selected Map Element
+	var mapId = $('.map.selected').find('.mapid').text() - 1;
+	mapEl.splice(mapId, 1);
 	$('.map.selected').remove();
+	for(i=0; i<mapEl.length; i++){
+		$('.map').eq(i).attr('id', 'map_'+i);
+		$('.map').eq(i).find('.mapid').text(i+1);
+	}
 	closeLightbox();
 	return false;
 }
-function selectMap(){
+function selectMap(){ // Select Map Element
 	$('.map').removeClass('selected');
 	$(this).addClass('selected');
 }
