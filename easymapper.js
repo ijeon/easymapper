@@ -8,18 +8,19 @@
 var unit = '%'; // Ruler Unit (%, px)
 var measure = 'drag'; // Measure Type (drag, click)
 var imgWidth, imgHeight, filepath; // Source Image Properties
-var tagScript, mapScript; // Generated Code
 var isIE = false || !!document.documentMode; // IE Detection
 var phase = 0; // Grid Drawing Phase (0: None, 1: Start, 2: End)
 var editing = false; // Map Element Editing Status
 var x, y; // Grid Position
 var start, end; // Map Coords
-var mapEl = [];
+var mapEl = []; // Map Elements Data
+var clipboard = []; // Copied Map Element Data
 
 $(document)
 	.on('click', '#test', test);
 function test(){
-	$('.map').addClass('small');
+	var mapId = $('.map.selected').find('.mapid').text() - 1;
+	console.log(mapId, mapEl[mapId]);
 }
 
 /* Event Bindings */
@@ -28,9 +29,11 @@ $(document)
 	.on('click', '.btn-lb-close', closeLightbox)
 	.on('click', '.btn-lb-load', loadImage)
 	.on('click', '.btn-lb-clear', clearWorkspace)
+	.on('click', '.btn-lb-link', linkMap)	
 	.on('click', '.btn-select', selectUnitMeasure)
 	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-lb-removemap', removeMap)
+	.on('click', '.btn-clipboard', copyCode)
 	.on('dblclick', '.map', function(){ openLightbox('link'); })
 	.on('resizestop dragstop', '.map', editMap)	
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
@@ -155,31 +158,33 @@ function createMap(start, end){ // Create A New Map Element
 	var top = Math.min(start.y, end.y);
 	var left = Math.min(start.x, end.x);
 	var el = '<li id="map_' + 
-	mapId + '" class="map unlinked" style="top:' +
+		mapId + '" class="map unlinked" style="top:' +
 		top + 'px; left:' +
 		left + 'px; width:' +
 		width + 'px; height:' +
 		height + 'px"><span class="mapid">' +
 		parseInt(mapId+1) + '</span><a class="btn-map-remove btn-lb-open" data-json="remove" href="#">×</a><a class="btn-map-resize" href="#">⤡</a><a class="btn-map-link btn-lb-open" data-json="link" href="#">🔗</a></li>';
 	$('#maps').append(el);
+	$('.map').removeClass('selected');
 	$('#map_'+mapId).addClass('selected').draggable({ containment: '#canvas' }).resizable({ containment: '#canvas', minWidth: 20, minHeight: 20 });
-	mapEl.push([top, left, width, height]);
+	mapEl.push([top, left, width, height, '', '_self']);
 	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
 	else $('.map.selected').removeClass('small');
 }
 function editMap(){ // Edit Map Element Size & Position Callback
-	var mapId = $('.map.selected').find('.mapid').text() - 1;
 	var top = parseInt($('.map.selected').css('top'));
 	var left = parseInt($('.map.selected').css('left'));
 	var width = parseInt($('.map.selected').css('width'));
 	var height = parseInt($('.map.selected').css('height'));
-	mapEl[mapId] = [top, left, width, height];
-	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
+	mapEl[getMapId()][0] = top;
+	mapEl[getMapId()][1] = left;
+	mapEl[getMapId()][2] = width;
+	mapEl[getMapId()][3] = height;
+	if(mapEl[getMapId()][2] < 40 || mapEl[getMapId()][3] < 30) $('.map.selected').addClass('small');
 	else $('.map.selected').removeClass('small');
 }
 function removeMap(){ // Remove Selected Map Element
-	var mapId = $('.map.selected').find('.mapid').text() - 1;
-	mapEl.splice(mapId, 1);
+	mapEl.splice(getMapId(), 1);
 	$('.map.selected').remove();
 	for(i=0; i<mapEl.length; i++){
 		$('.map').eq(i).attr('id', 'map_'+i);
@@ -191,6 +196,79 @@ function removeMap(){ // Remove Selected Map Element
 function selectMap(){ // Select Map Element
 	$('.map').removeClass('selected');
 	$(this).addClass('selected');
+}
+function linkMap(){ // Save Map Element Link Data
+	var link = $('#input-link-url').val();
+	var target = $('input[name="radio-link"]:checked').val();
+	if (link.indexOf('//') > 0) {
+		if (link.split('//')[1].length == 0) {
+			$('#err-link').addClass('active');
+		} else {
+			mapEl[getMapId()][4] = link;
+			mapEl[getMapId()][5] = target;
+			if (link.split('//')[1].length > 0) $('.map.selected').addClass('linked');
+			else $('.map.selected').removeClass('linked');
+			closeLightbox();
+		}
+	} else $('#err-link').addClass('active');
+	return false;
+}
+function loadMap(){ // Load Map Element Link Data
+	var link = mapEl[getMapId()][4];
+	var target = mapEl[getMapId()][5];
+	if (link.length > 0) $('#input-link-url').val(link);
+	$('input[name="radio-link"][value=' + target + ']').prop("checked", true);
+}
+function getMapId(){ // Get Selected Map Element Id
+	return $('.map.selected').find('.mapid').text() - 1;
+}
+function duplicateMap(step){
+	if (step == 'copy'){
+		clipboard = mapEl[getMapId()];
+	} else if (clipboard.length > 0) {
+		var start = { x: clipboard[1], y: clipboard[0] };
+		var end = { x: clipboard[1] + clipboard[2] + 1, y: clipboard[0] + clipboard[3] + 1 };
+		createMap(start, end);
+	}
+}
+
+/** Code Generate **/
+function generateCode(){
+	var imgSrc = $('#img').attr('src').indexOf('http') > -1 ? $('#img').attr('src') : '#ERR';
+	var tagElement = '';
+	var mapElement = '';
+	var mapHash = (+new Date).toString(36);
+	for(i=0;i<mapEl.length;i++){
+		var elSrc = mapEl[i][4].length > 0 ? mapEl[i][4] : '#ERR';
+		var elTarget = mapEl[i][5];
+		var tagElTop = (mapEl[i][0] / imgHeight * 100).toFixed(2);
+		var tagElLeft = (mapEl[i][1] / imgWidth * 100).toFixed(2);
+		var tagElWidth = (mapEl[i][2] / imgWidth * 100).toFixed(2);
+		var tagElHeight = (mapEl[i][3] / imgHeight * 100).toFixed(2);
+		var mapElStartX = mapEl[i][1];
+		var mapElStartY = mapEl[i][0];
+		var mapElEndX = mapEl[i][1] + mapEl[i][2];
+		var mapElEndY = mapEl[i][0] + mapEl[i][3];
+		tagElement += '<a href="' + elSrc + '" style="position:absolute;top:' + tagElTop + '%;left:' + tagElLeft + '%;width:' + tagElWidth + '%;height:' + tagElHeight + '%;background:url(about:blank);display:block;" target="' + elTarget + '"></a>';
+		mapElement += '<area shape="rect" coords="' + mapElStartX + ',' + mapElStartY + ',' + mapElEndX + ',' + mapElEndY + '" href="' + elSrc + '" target="' + elTarget + '">';
+	}
+	var tagScript = '<div style="position:relative;font-size:0;padding:0;max-width:' +
+		imgWidth + 'px;max-height:' +
+		imgHeight + 'px;"><img src="' +
+		imgSrc + '" style="width:100%;">' +
+		tagElement + '</div>';
+	var mapScript = '<img src="' +
+		imgSrc +'" usemap="#' +
+		mapHash +'"><map name="' +
+		mapHash + '">' +
+		mapElement + '</map>';
+	$('#code-tag').text(tagScript);
+	$('#code-map').text(mapScript);
+	if ($('#lb-content textarea').val().indexOf('#ERR') > -1) $('.errors').addClass('active');
+}
+function copyCode(){
+	$('#code-tag').select();
+	document.execCommand('Copy');
 }
 
 /** Lightbox **/
@@ -210,6 +288,9 @@ function openLightbox(jsonId){ // Create & Open Lightbox
 	closeLightbox();
 	$('#lightbox').addClass(jsonId).html(lb);
 	$('body').addClass('dimmed');
+	if (json.callback){ window[json.callback](); }
+	if ($('#lightbox').find('input').length > 0) $('#lightbox').find('input').eq(0).select();
+	if ($('#lightbox').find('textarea').length > 0) $('#lightbox').find('textarea').focus();
 	return false;
 }
 function closeLightbox(){ // Close & Reset Lightbox
@@ -238,7 +319,10 @@ function bindKeys(e){ // Key Bindings
 	var isSelect = !isDialog && $('.map.selected').length > 0;
 	switch (e.which){ 
 		case 13: // Enter: Submit, Edit Map Area Link
-			if (isDialog) $('#btn-lb-yes').trigger('click');
+			if (isDialog && $('#lightbox').find('textarea').length == 0) {
+				$('#btn-lb-yes').trigger('click');
+				return false;
+			}
 			if (isSelect) openLightbox('link');
 			break;
 		case 27: // ESC: Close Lightbox, Cancel Map Drawing
@@ -249,18 +333,16 @@ function bindKeys(e){ // Key Bindings
 			if (isSelect) openLightbox('remove');
 			break;
 		case 67: // C: (Ctrl+C) Copy Selected Map Element
-			if (e.ctrlKey && isSelect) console.log('copy');
+			if (e.ctrlKey && isSelect) duplicateMap('copy');
 			break;
 		case 86: // V: (Ctrl+V) Paste Map Element 
-			if (e.ctrlKey && !isDialog) console.log('paste');
-			break;
-		case 76: // L: Show Map Elements With No Link
+			if (e.ctrlKey && !isDialog) duplicateMap('paste');
 			break;
 		case 85: // U: Toggle Scale Unit
 			if (!isDialog) toggleUnit();
 			break;
 		case 112: // F1: Keyboard Shortcuts
-			openLightbox('help');
+			openLightbox('shortcut');
 			return false;
 			break;
 	}
@@ -314,7 +396,7 @@ var clearJson = { // CLEAR
 };
 var generateJson = { // GENERATE
 	title		: 'GENERATE SOURCE CODE',
-	content		: '<a class="btn-lb-open" data-json="tag" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="map" href="#">Classic Image Map Style (px, PC Only)</a>',
+	content		: '<a class="btn-lb-open" data-json="tags" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="maps" href="#">Classic Image Map Style (px, PC Only)</a>',
 	btnSet		: 'onebtn',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -323,27 +405,29 @@ var generateJson = { // GENERATE
 	btnYesJson	: '',
 	btnYes		: ''
 };
-var tagJson = { // GENERATE - Responsive A Tag Style
+var tagsJson = { // GENERATE - Responsive A Tag Style
 	title		: 'A TAG TYPE SOURCE CODE',
-	content		: '<p>' + tagScript + '</p>',
+	content		: '<textarea id="code-tag" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-open',
 	btnNoJson	: 'generate',
 	btnNo		: 'BACK',
 	btnYesClass	: 'btn-clipboard',
 	btnYesJson	: '',
-	btnYes		: 'COPY TO CLIPBOARD'		
+	btnYes		: 'COPY TO CLIPBOARD',
+	callback	: 'generateCode'
 };
-var mapJson = { // GENERATE - Classic Image Map Style
+var mapsJson = { // GENERATE - Classic Image Map Style
 	title		: 'IMAGE MAP TYPE SOURCE CODE',
-	content		: '<p>' + mapScript + '</p>',
+	content		: '<textarea id="code-map" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-open',
 	btnNoJson	: 'generate',
 	btnNo		: 'BACK',
 	btnYesClass	: 'btn-clipboard',
 	btnYesJson	: '',
-	btnYes		: 'COPY TO CLIPBOARD'		
+	btnYes		: 'COPY TO CLIPBOARD',
+	callback	: 'generateCode'
 };
 var helpJson = { // ?
 	title		: 'EASY MAPPER (v20180206)',
@@ -358,7 +442,7 @@ var helpJson = { // ?
 };
 var shortcutJson = { // ? - KEY SHORTCUTS
 	title		: 'KEYBOARD SHORTCUTS',
-	content		: '',
+	content		: '<p>Enter: Submit Values, Edit Map Area Link<br>ESC: Close Lightbox, Cancel Map Drawing<br>Delete: Remove Selected Map Element<br>Ctrl+C: Copy Selected Map Element<br>Ctrl+V: Paste Copied Map Element<br>U: Toggle Scale Unit<br>F1: Keyboard Shortcuts</p>',
 	btnSet		: 'onebtn',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -370,14 +454,15 @@ var shortcutJson = { // ? - KEY SHORTCUTS
 /** Map Elements **/
 var linkJson = { // Link Edit
 	title		: 'EDIT MAP AREA LINK',
-	content		: '',
+	content		: '<input id="input-link-url" type="text" value="http://" spellcheck="false"><p id="err-link" class="red">⚠ Enter a valid URL.</p><label class="radiolabel"><input type="radio" name="radio-link" value="_self" checked><span>Open in the same frame (target="_self")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_blank"><span>Open in a new window (target="_blank")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_parent"><span>Open in the parent frame (target="_parent")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_top"><span>Open in the full body (target="_top")</span></label>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
 	btnNo		: 'CANCEL',
 	btnYesClass	: 'btn-lb-link',
 	btnYesJson	: '',
-	btnYes		: 'CONFIRM'
+	btnYes		: 'CONFIRM',
+	callback	: 'loadMap'
 };
 var removeJson = { // Remove Map Element
 	title		: '&#9888; WARNING',
