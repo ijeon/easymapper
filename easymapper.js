@@ -267,8 +267,9 @@ function generateCode(){
 	if ($('#lb-content textarea').val().indexOf('#ERR') > -1) $('.errors').addClass('active');
 }
 function copyCode(){
-	$('#code-tag').select();
+	$('#lightbox').find('textarea').select();
 	document.execCommand('Copy');
+	return false;
 }
 
 /** Lightbox **/
@@ -442,7 +443,7 @@ var helpJson = { // ?
 };
 var shortcutJson = { // ? - KEY SHORTCUTS
 	title		: 'KEYBOARD SHORTCUTS',
-	content		: '<p>Enter: Submit Values, Edit Map Area Link<br>ESC: Close Lightbox, Cancel Map Drawing<br>Delete: Remove Selected Map Element<br>Ctrl+C: Copy Selected Map Element<br>Ctrl+V: Paste Copied Map Element<br>U: Toggle Scale Unit<br>F1: Keyboard Shortcuts</p>',
+	content		: '<p>Enter: Submit Values, Edit Map Area Link<br>ESC: Close Lightbox, Cancel Map Drawing<br>Delete: Remove Selected Map Element<br>Ctrl+C: Copy Selected Map Element<br>Ctrl+V: Paste Copied Map Element<br>U: Toggle Scale Unit<br>F1: Keyboard Shortcuts<br>Double Click: Edit Map Area Link</p>',
 	btnSet		: 'onebtn',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
