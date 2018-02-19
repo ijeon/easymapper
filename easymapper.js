@@ -15,6 +15,7 @@ var x, y; // Grid Position
 var start, end; // Map Coords
 var mapEl = []; // Map Elements Data
 var clipboard = []; // Copied Map Element Data
+var isImport = false; // Import Source Code Flag
 
 $(document)
 	.on('click', '#test', test);
@@ -34,6 +35,7 @@ $(document)
 	.on('click', '#btn-toggle-unit', toggleUnit)
 	.on('click', '.btn-lb-removemap', removeMap)
 	.on('click', '.btn-clipboard', copyCode)
+	.on('click', '.btn-lb-import', importCode)
 	.on('dblclick', '.map', function(){ openLightbox('link'); })
 	.on('resizestop dragstop', '.map', editMap)	
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
@@ -85,8 +87,8 @@ function drawRuler(){ // Draw Rulers
 	}
 }
 function loadImage(){ // Load Source Image
-	var imgsrc = $(this).parents('#lightbox').hasClass('url') ? $('#input-img-url').val() : filepath;	
-	$('#img').attr('src', imgsrc).on('load', setup);
+	var imgSrc = $(this).parents('#lightbox').hasClass('url') ? $('#input-img-url').val() : filepath;	
+	$('#img').attr('src', imgSrc).on('load', setup);
 	closeLightbox();
 	return false;
 }
@@ -95,6 +97,38 @@ function parsePath(e){ // Get Source Image Filepath
     filepath = URL.createObjectURL(e.target.files[0]);    
     $('#label-img-local > p').text('File loaded');
     $('#label-img-local').addClass('active');
+}
+function importCode(){ // Import Source Code
+	$('#imported').html($('#input-code').val());
+	var imgSrc = $('#imported').find('img').attr('src');
+	var maps = [];
+	$('#img').attr('src', imgSrc).on('load', importSetup);
+	return false;
+}
+function importSetup(){ // Import Setup
+	var isTag = $('#imported').find('a').length > 0;
+	var els = isTag ? $('#imported').find('a') : $('#imported').find('area');
+	setup();
+	isImport = true;
+	for(var i=0; i < els.length; i++){
+		var el = els.eq(i);
+		var coords = [];
+			coords[0] = isTag ? parseInt(el.css('left')) : el.attr('coords').split(',')[0];
+			coords[1] = isTag ? parseInt(el.css('top')) : el.attr('coords').split(',')[1];
+			coords[2] = isTag ? parseInt(el.css('left')) + parseInt(el.css('width')) : el.attr('coords').split(',')[2];
+			coords[3] = isTag ? parseInt(el.css('top')) + parseInt(el.css('height')) : el.attr('coords').split(',')[3];
+		var link = el.attr('href');
+		var target = el.attr('target');
+		var start = { x: coords[0], y: coords[1] };
+		var end = { x: coords[2], y: coords[3] };
+		createMap(start, end);
+		if (link.indexOf('//') > 0) {
+			mapEl[i][4] = link;
+			$('.map').eq(i).addClass('linked');
+		}
+		mapEl[i][5] = target;
+	}
+	isImport = false;
 }
 
 /** Grid **/
@@ -170,6 +204,7 @@ function createMap(start, end){ // Create A New Map Element
 	mapEl.push([top, left, width, height, '', '_self']);
 	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
 	else $('.map.selected').removeClass('small');
+	if (!isImport) openLightbox('link');
 }
 function editMap(){ // Edit Map Element Size & Position Callback
 	var top = parseInt($('.map.selected').css('top'));
@@ -222,7 +257,7 @@ function loadMap(){ // Load Map Element Link Data
 function getMapId(){ // Get Selected Map Element Id
 	return $('.map.selected').find('.mapid').text() - 1;
 }
-function duplicateMap(step){
+function duplicateMap(step){ // Copy & Paste Map Element
 	if (step == 'copy'){
 		clipboard = mapEl[getMapId()];
 	} else if (clipboard.length > 0) {
@@ -233,7 +268,7 @@ function duplicateMap(step){
 }
 
 /** Code Generate **/
-function generateCode(){
+function generateCode(){ // Source Code Generate
 	var imgSrc = $('#img').attr('src').indexOf('http') > -1 ? $('#img').attr('src') : '#ERR';
 	var tagElement = '';
 	var mapElement = '';
@@ -264,9 +299,12 @@ function generateCode(){
 		mapElement + '</map>';
 	$('#code-tag').text(tagScript);
 	$('#code-map').text(mapScript);
-	if ($('#lb-content textarea').val().indexOf('#ERR') > -1) $('.errors').addClass('active');
+	if ($('#lb-content textarea').val().indexOf('#ERR') > -1) {
+		$('.errors').addClass('active');
+		$('#lb-content textarea').addClass('err');
+	}
 }
-function copyCode(){
+function copyCode(){ // Copy Code To Clipboard
 	$('#lightbox').find('textarea').select();
 	document.execCommand('Copy');
 	return false;

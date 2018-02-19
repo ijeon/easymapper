@@ -36,8 +36,8 @@ a { text-decoration:none; } ul { list-style:none; } .red { color:#dd0000; }
 #err-link { margin-bottom:10px; display:none; }
 .errors { margin-top:10px; display:none; }
 #err-link.active, .errors.active { display:block; }
-#code-tag { font-size:14px; }
-textarea { display:block; width:470px; border:1px solid #ddd; resize:none; padding:5px; font-size:14px; }
+textarea { display:block; width:470px; border:1px solid #ddd; resize:none; padding:5px; font-size:14px; overflow:auto; outline:none; -webkit-box-shadow:none; -moz-box-shadow:none; box-shadow:none; }
+textarea.err { background:#ffaaaa; border:1px solid #dd0000; }
 
 /* Navigation Bar */
 #navbar { position:fixed; top:0; left:0; width:100%; min-width:520px; color:#fff; background:#224466; text-align:right; display:block; z-index:100; }
@@ -67,6 +67,7 @@ textarea { display:block; width:470px; border:1px solid #ddd; resize:none; paddi
 #canvas { position:relative; top:20px; left:20px; display:inline-block; overflow:hidden; cursor:none; }
 #imgwrap { position:relative; z-index:10; }
 #img { -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
+#imported { visibility:hidden; position:absolute; top:-9999px; left:-9999px; }
 
 /* Ruler */
 #btn-toggle-unit { width:20px; height:20px; position:absolute; display:block; top:0; left:0; font-size:12px; line-height:19px; text-align:center; background:#ccc; }
@@ -104,6 +105,7 @@ textarea { display:block; width:470px; border:1px solid #ddd; resize:none; paddi
 .map { position:absolute !important; border:1px dashed #0b6fde; background:rgba(11,111,222,.5); display:block; cursor:move; }
 .map.selected { border:1px dashed #fff; }
 .map.linked { border:1px solid #0b6fde; }
+.map.selected.linked { border:1px solid #fff; }
 .map.error { border:1px solid #de0b0b; background:rgba(222,11,11,.5); }
 .btn-map-resize { position:absolute; bottom:0; right:0; padding:2px 4px; font-size:16px; color:#fff; cursor:move; }
 .btn-map-remove { position:absolute; top:0; right:0; padding:0 5px 2px; font-size:20px; color:#fff; }
@@ -112,5 +114,4 @@ textarea { display:block; width:470px; border:1px solid #ddd; resize:none; paddi
 .map.small .mapid { top:-23px; background:#000; }
 .map.small .btn-map-remove { top:-23px; background:#000; }
 .map.small .btn-map-link { left:-21px; top:0; padding:3px 2px; background:#000; -webkit-transform:none; transform:none; }
-
 
