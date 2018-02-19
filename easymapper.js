@@ -1,4 +1,4 @@
-/* Easy Mapper (v20180206a)
+/* Easy Mapper (v20180219a)
  * Author: Inpyo Jeon (inpyodev@gmail.com)
  * License: GPLv3 (Free Open Source License)
  * Browser Support: IE10+, Chrome (PC Only)
@@ -16,13 +16,11 @@ var start, end; // Map Coords
 var mapEl = []; // Map Elements Data
 var clipboard = []; // Copied Map Element Data
 var isImport = false; // Import Source Code Flag
-
-$(document)
-	.on('click', '#test', test);
-function test(){
-	var mapId = $('.map.selected').find('.mapid').text() - 1;
-	console.log(mapId, mapEl[mapId]);
-}
+var isPaste = false; // Paste Map Element Flag
+var setLinkEdit = true; // Settings: Map Link Edit Auto-Popup Flag
+var setShortcut = true; // Settings: Use Keyboard Shortcuts Flag
+var theme = 'denim'; // UI Color Theme
+var language = 'eng'; // Language Select
 
 /* Event Bindings */
 $(document)
@@ -36,6 +34,8 @@ $(document)
 	.on('click', '.btn-lb-removemap', removeMap)
 	.on('click', '.btn-clipboard', copyCode)
 	.on('click', '.btn-lb-import', importCode)
+	.on('click', '#settings', function(){ openLightbox('settings'); })
+	.on('click', '.btn-lb-settings', applySettings)
 	.on('dblclick', '.map', function(){ openLightbox('link'); })
 	.on('resizestop dragstop', '.map', editMap)	
 	.on('mouseenter mouseleave', '#imgwrap', toggleGrid)
@@ -43,6 +43,7 @@ $(document)
 	.on('mousedown', '.map', selectMap)
 	.on('mousedown mouseup click', '#imgwrap', drawMap)
 	.on('change', '#input-img-local', parsePath)
+	.on('change', '#select-theme', themePreview)
 	.on('keydown', bindKeys);
 $(window).on('load', setup); // Initialize
 
@@ -204,7 +205,7 @@ function createMap(start, end){ // Create A New Map Element
 	mapEl.push([top, left, width, height, '', '_self']);
 	if(mapEl[mapId][2] < 40 || mapEl[mapId][3] < 30) $('.map.selected').addClass('small');
 	else $('.map.selected').removeClass('small');
-	if (!isImport) openLightbox('link');
+	if (setLinkEdit && (!isImport && !isPaste)) openLightbox('link');
 }
 function editMap(){ // Edit Map Element Size & Position Callback
 	var top = parseInt($('.map.selected').css('top'));
@@ -238,11 +239,11 @@ function linkMap(){ // Save Map Element Link Data
 	if (link.indexOf('//') > 0) {
 		if (link.split('//')[1].length == 0) {
 			$('#err-link').addClass('active');
-		} else {
+		} else{
+			if (link.split('//')[2]) link = link.substring(link.indexOf('//')+2); // User Error Fix
 			mapEl[getMapId()][4] = link;
 			mapEl[getMapId()][5] = target;
-			if (link.split('//')[1].length > 0) $('.map.selected').addClass('linked');
-			else $('.map.selected').removeClass('linked');
+			$('.map.selected').addClass('linked');
 			closeLightbox();
 		}
 	} else $('#err-link').addClass('active');
@@ -263,7 +264,9 @@ function duplicateMap(step){ // Copy & Paste Map Element
 	} else if (clipboard.length > 0) {
 		var start = { x: clipboard[1], y: clipboard[0] };
 		var end = { x: clipboard[1] + clipboard[2] + 1, y: clipboard[0] + clipboard[3] + 1 };
+		isPaste = true;
 		createMap(start, end);
+		isPaste = false;
 	}
 }
 
@@ -313,7 +316,7 @@ function copyCode(){ // Copy Code To Clipboard
 /** Lightbox **/
 function openLightbox(jsonId){ // Create & Open Lightbox
 	if(typeof jsonId == 'object') jsonId = $(this).data('json');
-	var json = window[jsonId + 'Json'];
+	var json = window[language + '_' + jsonId + 'Json'];
 	var lb = '<div id="lb-title"><p>' +
 		json.title + '</p><a class="btn-lb-close" href="#">×</a></div><div id="lb-content">' +
 		json.content + '</div><div id="lb-btnset" class="' +
@@ -328,7 +331,7 @@ function openLightbox(jsonId){ // Create & Open Lightbox
 	$('#lightbox').addClass(jsonId).html(lb);
 	$('body').addClass('dimmed');
 	if (json.callback){ window[json.callback](); }
-	if ($('#lightbox').find('input').length > 0) $('#lightbox').find('input').eq(0).select();
+	if ($('#lightbox').find('input[type="text"]').length > 0) $('#lightbox').find('input[type="text"]').eq(0).select();
 	if ($('#lightbox').find('textarea').length > 0) $('#lightbox').find('textarea').focus();
 	return false;
 }
@@ -353,43 +356,66 @@ function toggleUnit(){ // Toggle Scale Unit
 	setCoords();
 	return false;
 }
+function settingsCallback(){
+	if (setLinkEdit) $('#settings-edit-popup').prop('checked', true);
+	else $('#settings-edit-popup').prop('checked', false);
+	if (setShortcut) $('#settings-key-shortcuts').prop('checked', true);
+	else $('#settings-key-shortcuts').prop('checked', false);
+	$('#select-theme').find('option[value="' + theme + '"]').prop('selected', true);
+	$('#select-lang').find('option[value="' + language + '"]').prop('selected', true);
+}
+function applySettings(){ // Apply Settings
+	if ($('#settings-edit-popup').prop('checked')) setLinkEdit = true;
+	else setLinkEdit = false;
+	if ($('#settings-key-shortcuts').prop('checked')) setShortcut = true;
+	else setShortcut = false;
+	language = $('#select-lang').find('option:selected').val();
+	closeLightbox();
+	return false;
+}
+function themePreview(){
+	theme = $(this).find('option:selected').val();
+	$('body').removeClass('denim wine green white batsy black').addClass(theme);
+}
 function bindKeys(e){ // Key Bindings
 	var isDialog = $('body').hasClass('dimmed');
 	var isSelect = !isDialog && $('.map.selected').length > 0;
-	switch (e.which){ 
-		case 13: // Enter: Submit, Edit Map Area Link
-			if (isDialog && $('#lightbox').find('textarea').length == 0) {
-				$('#btn-lb-yes').trigger('click');
+	if (setShortcut){
+		switch (e.which){ 
+			case 13: // Enter: Submit, Edit Map Area Link
+				if (isDialog && $('#lightbox').find('textarea').length == 0) {
+					$('#btn-lb-yes').trigger('click');
+					return false;
+				}
+				if (isSelect) openLightbox('link');
+				break;
+			case 27: // ESC: Close Lightbox, Cancel Map Drawing
+				if (isDialog) closeLightbox();
+				if (phase == 1) resetGrid();
+				break; 
+			case 46: // DEL: Remove Selected Map Element
+				if (isSelect) openLightbox('remove');
+				break;
+			case 67: // C: (Ctrl+C) Copy Selected Map Element
+				if (e.ctrlKey && isSelect) duplicateMap('copy');
+				break;
+			case 86: // V: (Ctrl+V) Paste Map Element 
+				if (e.ctrlKey && !isDialog) duplicateMap('paste');
+				break;
+			case 85: // U: Toggle Scale Unit
+				if (!isDialog) toggleUnit();
+				break;
+			case 112: // F1: Keyboard Shortcuts
+				openLightbox('shortcut');
 				return false;
-			}
-			if (isSelect) openLightbox('link');
-			break;
-		case 27: // ESC: Close Lightbox, Cancel Map Drawing
-			if (isDialog) closeLightbox();
-			if (phase == 1) resetGrid();
-			break; 
-		case 46: // DEL: Remove Selected Map Element
-			if (isSelect) openLightbox('remove');
-			break;
-		case 67: // C: (Ctrl+C) Copy Selected Map Element
-			if (e.ctrlKey && isSelect) duplicateMap('copy');
-			break;
-		case 86: // V: (Ctrl+V) Paste Map Element 
-			if (e.ctrlKey && !isDialog) duplicateMap('paste');
-			break;
-		case 85: // U: Toggle Scale Unit
-			if (!isDialog) toggleUnit();
-			break;
-		case 112: // F1: Keyboard Shortcuts
-			openLightbox('shortcut');
-			return false;
-			break;
-	}
+				break;
+		}
+	}	
 }
 
-/* Lightbox JSON Data */
+/* Lightbox JSON Data (English) */
 /** Navigation Bar **/
-var codeJson = { // SOURCE - CODE
+var eng_codeJson = { // SOURCE - CODE
 	title		: 'LOAD MAP ELEMENTS FROM SOURCE CODE',
 	content		: '<textarea id="input-code" rows="6" spellcheck="false"></textarea><p class="red">&#9888; Importing source code will remove every map elements and links.</p>',
 	btnSet		: '',
@@ -400,7 +426,7 @@ var codeJson = { // SOURCE - CODE
 	btnYesJson	: '',
 	btnYes		: 'IMPORT &amp; PARSE'
 };
-var urlJson = { // SOURCE - URL
+var eng_urlJson = { // SOURCE - URL
 	title		: 'LOAD IMAGE FROM SOURCE URL',
 	content		: '<input id="input-img-url" type="text" value="http://" spellcheck="false"><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
 	btnSet		: '',
@@ -411,7 +437,7 @@ var urlJson = { // SOURCE - URL
 	btnYesJson	: '',
 	btnYes		: 'LOAD'
 };
-var localJson = { // SOURCE - LOCAL
+var eng_localJson = { // SOURCE - LOCAL
 	title		: 'LOAD IMAGE FROM LOCAL STORAGE',
 	content		: '<label id="label-img-local"><input id="input-img-local" type="file"><p>' + (isIE ? 'Click to load an image' : 'Drag &amp; drop or click to load') + '</p></label><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
 	btnSet		: '',
@@ -422,7 +448,7 @@ var localJson = { // SOURCE - LOCAL
 	btnYesJson	: '',
 	btnYes		: 'LOAD'
 };
-var clearJson = { // CLEAR
+var eng_clearJson = { // CLEAR
 	title		: '&#9888; WARNING',
 	content		: '<p>Do you really want to remove every map elements and links from the workspace?</p>',
 	btnSet		: '',
@@ -433,7 +459,7 @@ var clearJson = { // CLEAR
 	btnYesJson	: '',
 	btnYes		: 'YES'
 };
-var generateJson = { // GENERATE
+var eng_generateJson = { // GENERATE
 	title		: 'GENERATE SOURCE CODE',
 	content		: '<a class="btn-lb-open" data-json="tags" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="maps" href="#">Classic Image Map Style (px, PC Only)</a>',
 	btnSet		: 'onebtn',
@@ -444,7 +470,7 @@ var generateJson = { // GENERATE
 	btnYesJson	: '',
 	btnYes		: ''
 };
-var tagsJson = { // GENERATE - Responsive A Tag Style
+var eng_tagsJson = { // GENERATE - Responsive A Tag Style
 	title		: 'A TAG TYPE SOURCE CODE',
 	content		: '<textarea id="code-tag" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
 	btnSet		: '',
@@ -456,7 +482,7 @@ var tagsJson = { // GENERATE - Responsive A Tag Style
 	btnYes		: 'COPY TO CLIPBOARD',
 	callback	: 'generateCode'
 };
-var mapsJson = { // GENERATE - Classic Image Map Style
+var eng_mapsJson = { // GENERATE - Classic Image Map Style
 	title		: 'IMAGE MAP TYPE SOURCE CODE',
 	content		: '<textarea id="code-map" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
 	btnSet		: '',
@@ -468,7 +494,7 @@ var mapsJson = { // GENERATE - Classic Image Map Style
 	btnYes		: 'COPY TO CLIPBOARD',
 	callback	: 'generateCode'
 };
-var helpJson = { // ?
+var eng_helpJson = { // ?
 	title		: 'EASY MAPPER (v20180206)',
 	content		: '<p>Author: Inpyo Jeon (inpyodev@gmail.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
 	btnSet		: '',
@@ -479,7 +505,7 @@ var helpJson = { // ?
 	btnYesJson	: 'shortcut',
 	btnYes		: 'ⓘ KEY SHORTCUTS'
 };
-var shortcutJson = { // ? - KEY SHORTCUTS
+var eng_shortcutJson = { // ? - KEY SHORTCUTS
 	title		: 'KEYBOARD SHORTCUTS',
 	content		: '<p>Enter: Submit Values, Edit Map Area Link<br>ESC: Close Lightbox, Cancel Map Drawing<br>Delete: Remove Selected Map Element<br>Ctrl+C: Copy Selected Map Element<br>Ctrl+V: Paste Copied Map Element<br>U: Toggle Scale Unit<br>F1: Keyboard Shortcuts<br>Double Click: Edit Map Area Link</p>',
 	btnSet		: 'onebtn',
@@ -490,8 +516,20 @@ var shortcutJson = { // ? - KEY SHORTCUTS
 	btnYesJson	: '',
 	btnYes		: ''
 };
+var eng_settingsJson = { // PREFERENCES
+	title		: 'PREFERENCES',
+	content		: '<p><input type="checkbox" id="settings-edit-popup" class="checkbox"><label for="settings-edit-popup">Map Link Edit Auto-Popup</label></p><p><input type="checkbox" id="settings-key-shortcuts" class="checkbox"><label for="settings-key-shortcuts">Use Keyboard Shortcuts</label></p><p><span class="select-label">UI Color Theme</span><select class="selectbox" id="select-theme"><option value="denim" selected>Denim</option><option value="wine">Castello di Ama</option><option value="green">Pine Forest</option><option value="white">Mont Blanc</option><option value="batsy">Caped Crusader</option><option value="black">Monochrome</option></select></p><p><span class="select-label">Language Select</span><select class="selectbox" id="select-lang"><option value="eng" selected>English</option><option value="kor">Korean</option></select></p><p class="red">⚠ Changing "UI Color Theme" option would be applied immediately w/o confirmation.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-settings',
+	btnYesJson	: '',
+	btnYes		: 'CONFIRM',
+	callback	: 'settingsCallback'
+};
 /** Map Elements **/
-var linkJson = { // Link Edit
+var eng_linkJson = { // Link Edit
 	title		: 'EDIT MAP AREA LINK',
 	content		: '<input id="input-link-url" type="text" value="http://" spellcheck="false"><p id="err-link" class="red">⚠ Enter a valid URL.</p><label class="radiolabel"><input type="radio" name="radio-link" value="_self" checked><span>Open in the same frame (target="_self")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_blank"><span>Open in a new window (target="_blank")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_parent"><span>Open in the parent frame (target="_parent")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_top"><span>Open in the full body (target="_top")</span></label>',
 	btnSet		: '',
@@ -503,7 +541,7 @@ var linkJson = { // Link Edit
 	btnYes		: 'CONFIRM',
 	callback	: 'loadMap'
 };
-var removeJson = { // Remove Map Element
+var eng_removeJson = { // Remove Map Element
 	title		: '&#9888; WARNING',
 	content		: '<p>Do you really want to remove this map element from the workspace?</p>',
 	btnSet		: '',
@@ -513,4 +551,144 @@ var removeJson = { // Remove Map Element
 	btnYesClass	: 'btn-lb-removemap',
 	btnYesJson	: '',
 	btnYes		: 'YES'
-}
+};
+
+/* Lightbox JSON Data (Korean) */
+/** Navigation Bar **/
+var kor_codeJson = { // SOURCE - CODE
+	title		: '소스 코드 불러오기',
+	content		: '<textarea id="input-code" rows="6" spellcheck="false"></textarea><p class="red">&#9888; Importing source code will remove every map elements and links.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-import',
+	btnYesJson	: '',
+	btnYes		: 'IMPORT &amp; PARSE'
+};
+var eng_urlJson = { // SOURCE - URL
+	title		: 'LOAD IMAGE FROM SOURCE URL',
+	content		: '<input id="input-img-url" type="text" value="http://" spellcheck="false"><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-load',
+	btnYesJson	: '',
+	btnYes		: 'LOAD'
+};
+var eng_localJson = { // SOURCE - LOCAL
+	title		: 'LOAD IMAGE FROM LOCAL STORAGE',
+	content		: '<label id="label-img-local"><input id="input-img-local" type="file"><p>' + (isIE ? 'Click to load an image' : 'Drag &amp; drop or click to load') + '</p></label><p class="red">&#9888; Loading a new image source will remove every map elements and links.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-load',
+	btnYesJson	: '',
+	btnYes		: 'LOAD'
+};
+var eng_clearJson = { // CLEAR
+	title		: '&#9888; WARNING',
+	content		: '<p>Do you really want to remove every map elements and links from the workspace?</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'NO',
+	btnYesClass	: 'btn-lb-clear',
+	btnYesJson	: '',
+	btnYes		: 'YES'
+};
+var eng_generateJson = { // GENERATE
+	title		: 'GENERATE SOURCE CODE',
+	content		: '<a class="btn-lb-open" data-json="tags" href="#">Responsive A Tag Style (%, Mobile OK)</a><a class="btn-lb-open" data-json="maps" href="#">Classic Image Map Style (px, PC Only)</a>',
+	btnSet		: 'onebtn',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: '',
+	btnYesJson	: '',
+	btnYes		: ''
+};
+var eng_tagsJson = { // GENERATE - Responsive A Tag Style
+	title		: 'A TAG TYPE SOURCE CODE',
+	content		: '<textarea id="code-tag" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-open',
+	btnNoJson	: 'generate',
+	btnNo		: 'BACK',
+	btnYesClass	: 'btn-clipboard',
+	btnYesJson	: '',
+	btnYes		: 'COPY TO CLIPBOARD',
+	callback	: 'generateCode'
+};
+var eng_mapsJson = { // GENERATE - Classic Image Map Style
+	title		: 'IMAGE MAP TYPE SOURCE CODE',
+	content		: '<textarea id="code-map" rows="8" spellcheck="false"></textarea><p class="red errors">⚠ Check for the errors (#ERR) before using this code.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-open',
+	btnNoJson	: 'generate',
+	btnNo		: 'BACK',
+	btnYesClass	: 'btn-clipboard',
+	btnYesJson	: '',
+	btnYes		: 'COPY TO CLIPBOARD',
+	callback	: 'generateCode'
+};
+var eng_helpJson = { // ?
+	title		: 'EASY MAPPER (v20180206)',
+	content		: '<p>Author: Inpyo Jeon (inpyodev@gmail.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CLOSE',
+	btnYesClass	: 'btn-lb-open',
+	btnYesJson	: 'shortcut',
+	btnYes		: 'ⓘ KEY SHORTCUTS'
+};
+var eng_shortcutJson = { // ? - KEY SHORTCUTS
+	title		: 'KEYBOARD SHORTCUTS',
+	content		: '<p>Enter: Submit Values, Edit Map Area Link<br>ESC: Close Lightbox, Cancel Map Drawing<br>Delete: Remove Selected Map Element<br>Ctrl+C: Copy Selected Map Element<br>Ctrl+V: Paste Copied Map Element<br>U: Toggle Scale Unit<br>F1: Keyboard Shortcuts<br>Double Click: Edit Map Area Link</p>',
+	btnSet		: 'onebtn',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CLOSE',
+	btnYesClass	: '',
+	btnYesJson	: '',
+	btnYes		: ''
+};
+var eng_settingsJson = { // PREFERENCES
+	title		: 'PREFERENCES',
+	content		: '<p><input type="checkbox" id="settings-edit-popup" class="checkbox"><label for="settings-edit-popup">Map Link Edit Auto-Popup</label></p><p><input type="checkbox" id="settings-key-shortcuts" class="checkbox"><label for="settings-key-shortcuts">Use Keyboard Shortcuts</label></p><p><span class="select-label">UI Color Theme</span><select class="selectbox" id="select-theme"><option value="denim" selected>Denim</option><option value="wine">Castello di Ama</option><option value="green">Pine Forest</option><option value="white">Mont Blanc</option><option value="batsy">Caped Crusader</option><option value="black">Monochrome</option></select></p><p><span class="select-label">Language Select</span><select class="selectbox" id="select-lang"><option value="eng" selected>English</option><option value="kor">Korean</option></select></p><p class="red">⚠ Changing "UI Color Theme" option would be applied immediately w/o confirmation.</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-settings',
+	btnYesJson	: '',
+	btnYes		: 'CONFIRM',
+	callback	: 'settingsCallback'
+};
+/** Map Elements **/
+var eng_linkJson = { // Link Edit
+	title		: 'EDIT MAP AREA LINK',
+	content		: '<input id="input-link-url" type="text" value="http://" spellcheck="false"><p id="err-link" class="red">⚠ Enter a valid URL.</p><label class="radiolabel"><input type="radio" name="radio-link" value="_self" checked><span>Open in the same frame (target="_self")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_blank"><span>Open in a new window (target="_blank")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_parent"><span>Open in the parent frame (target="_parent")</span></label><label class="radiolabel"><input type="radio" name="radio-link" value="_top"><span>Open in the full body (target="_top")</span></label>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'CANCEL',
+	btnYesClass	: 'btn-lb-link',
+	btnYesJson	: '',
+	btnYes		: 'CONFIRM',
+	callback	: 'loadMap'
+};
+var eng_removeJson = { // Remove Map Element
+	title		: '&#9888; WARNING',
+	content		: '<p>Do you really want to remove this map element from the workspace?</p>',
+	btnSet		: '',
+	btnNoClass	: 'btn-lb-close',
+	btnNoJson	: '',
+	btnNo		: 'NO',
+	btnYesClass	: 'btn-lb-removemap',
+	btnYesJson	: '',
+	btnYes		: 'YES'
+};
