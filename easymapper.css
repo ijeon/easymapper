@@ -108,6 +108,7 @@ textarea.err { background:#ffaaaa; border:1px solid #dd0000; }
 .map.small .btn-map-link { left:-21px; top:0; padding:3px 2px; background:#000; -webkit-transform:none; transform:none; }
 
 /* Theme */
+/** Denim **/
 body.denim #lb-title { background:#224466; color:#fff; }
 body.denim #lb-btnset a { color:#fff; }
 body.denim #btn-lb-no { background:#666; }
@@ -132,6 +133,7 @@ body.denim .map.linked { border:1px solid #0b6fde; }
 body.denim .map.selected.linked { border:1px solid #fff; }
 body.denim .map > a, body.denim .map > span { color:#fff; }
 
+/** Castello di Ama **/
 body.wine #lb-title { background:#662222; color:#fff; }
 body.wine #lb-btnset a { color:#fff; }
 body.wine #btn-lb-no { background:#666; }
@@ -156,6 +158,7 @@ body.wine .map.linked { border:1px solid #662222; }
 body.wine .map.selected.linked { border:1px solid #fff; }
 body.wine .map > a, body.wine .map > span { color:#fff; }
 
+/** Pine Forest **/
 body.green #lb-title { background:#226622; color:#fff; }
 body.green #lb-btnset a { color:#fff; }
 body.green #btn-lb-no { background:#885500; }
@@ -180,6 +183,7 @@ body.green .map.linked { border:1px solid #226622; }
 body.green .map.selected.linked { border:1px solid #fff; }
 body.green .map > a, body.green .map > span { color:#fff; }
 
+/** Mont Blanc **/
 body.white #lb-title { background:#ddd; color:#000; }
 body.white #lb-btnset a { color:#000; }
 body.white #btn-lb-no { background:#bbb; }
@@ -204,6 +208,7 @@ body.white .map.linked { border:1px solid #999; }
 body.white .map.selected.linked { border:1px solid #fff; }
 body.white .map > a, body.white .map > span { color:#000; }
 
+/** Caped Crusader **/
 body.batsy .red { color:#ffee00; }
 body.batsy #lightbox { border:2px solid #888; }
 body.batsy #lb-content { background:#888; }
@@ -236,6 +241,7 @@ body.batsy .map.linked { border:1px solid #000; }
 body.batsy .map.selected.linked { border:1px solid #ffee00; }
 body.batsy .map > a, body.batsy .map > span { color:#ffee00; }
 
+/** Monochrome **/
 body.black #lb-title { background:#000; color:#fff; }
 body.black #lb-btnset a { color:#fff; }
 body.black #btn-lb-no { background:#444; }

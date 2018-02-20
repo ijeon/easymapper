@@ -8,9 +8,12 @@
 <link rel="stylesheet" href="jquery-ui.min.css">
 <script src="jquery-3.3.1.min.js"></script>
 <script src="jquery-ui.min.js"></script>
-<script src="easymapper.js"></script>
+<!-- <script src="easymapper.js"></script> -->
+<script src="easymapper.min.js"></script>
+<script src="easymapper-scripts.js"></script>
 </head>
-<body class="denim">
+<body>
+<!-- https://github.com/inpyodev/easymapper -->
 
 <!-- Dim Screen -->
 <div id="dim" class="btn-lb-close"></div>
@@ -33,21 +36,21 @@
 	<a id="settings" href="#">⚙</a>
 	<ul>
 		<li>
-			<p class="script" data-script="source">SOURCE ▾</p>
+			<p class="script" data-script="source"></p>
 			<ul>
 				<li>
-					<a class="btn-lb-open script" data-json="code" href="#" data-script="code">CODE</a>
+					<a class="btn-lb-open script" data-json="code" href="#" data-script="code"></a>
 				</li>
 				<li>
-					<a class="btn-lb-open script" data-json="url" href="#" data-script="url">URL</a>
+					<a class="btn-lb-open script" data-json="url" href="#" data-script="url"></a>
 				</li>
 				<li>
-					<a class="btn-lb-open script" data-json="local" href="#" data-script="local">LOCAL</a>
+					<a class="btn-lb-open script" data-json="local" href="#" data-script="local"></a>
 				</li>
 			</ul>
 		</li>
 		<li class="chk">
-			<p class="script" data-script="unit">UNIT ▾</p>
+			<p class="script" data-script="unit"></p>
 			<ul class="unit">
 				<li class="active">
 					<a class="btn-select" href="#">%</a>
@@ -58,21 +61,21 @@
 			</ul>
 		</li>
 		<li class="chk">
-			<p class="script" data-script="measure">MEASURE ▾</p>
+			<p class="script" data-script="measure"></p>
 			<ul class="measure">
 				<li class="active">
-					<a class="btn-select script" href="#" data-script="drag">DRAG</a>
+					<a class="btn-select script" href="#" data-script="drag"></a>
 				</li>
 				<li>
-					<a class="btn-select script" href="#" data-script="click">CLICK</a>
+					<a class="btn-select script" href="#" data-script="click"></a>
 				</li>
 			</ul>
 		</li>
 		<li>
-			<a class="btn-lb-open script" data-json="clear" href="#" data-script="clear">CLEAR</a>
+			<a class="btn-lb-open script" data-json="clear" href="#" data-script="clear"></a>
 		</li>
 		<li>
-			<a class="btn-lb-open script" data-json="generate" href="#" data-script="generate">GENERATE</a>
+			<a class="btn-lb-open script" data-json="generate" href="#" data-script="generate"></a>
 		</li>
 		<li>
 			<a class="btn-lb-open" data-json="help" href="#">?</a>
