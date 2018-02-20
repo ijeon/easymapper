@@ -22,6 +22,8 @@ a { text-decoration:none; } ul { list-style:none; } .red { color:#dd0000; }
 #input-link-url { width:298px; padding:5px; border:1px solid #888; }
 #lightbox.generate #lb-content a { display:block; padding:10px; border:1px dashed #aaa; margin-bottom:10px; }
 #lightbox.generate #lb-content a:last-child { margin-bottom:0; }
+#label-img-local:hover { border:2px dashed #444; }
+#label-img-local:hover > p { color:#444; }
 #lightbox.code, #lightbox.tags, #lightbox.maps { width:500px; }
 #lightbox.link { width:330px; }
 .radiolabel { display:block; cursor:pointer; }
