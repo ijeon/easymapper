@@ -349,7 +349,7 @@ function closeLightbox(){ // Close & Reset Lightbox
 
 /** General Control **/
 function selectUnitMeasure(){ // Set Unit & Measure Type
-	window[$(this).closest('ul').attr('class')] = $(this).text().toLowerCase();
+	window[$(this).closest('ul').attr('class')] = $(this).data('script');
 	$(this).parent().addClass('active').siblings().removeClass('active');
 	if ($(this).closest('ul').attr('class') == 'unit') drawRuler();
 	return false;
