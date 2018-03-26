@@ -92,7 +92,7 @@ function drawRuler(){ // Draw Rulers
 	}
 }
 function loadImage(){ // Load Source Image
-	var imgSrc = $(this).parents('#lightbox').hasClass('url') ? $('#input-img-url').val() : filepath;	
+	var imgSrc = $(this).parents('#lightbox').hasClass('url') ? $('#input-img-url').val().trim() : filepath;	
 	$('#img').attr('src', imgSrc).on('load', setup);
 	closeLightbox();
 	return false;
@@ -238,7 +238,7 @@ function selectMap(){ // Select Map Element
 	$(this).addClass('selected');
 }
 function linkMap(){ // Save Map Element Link Data
-	var link = $('#input-link-url').val();
+	var link = $('#input-link-url').val().trim();
 	var target = $('input[name="radio-link"]:checked').val();
 	if (link.indexOf('//') > 0) {
 		if (link.split('//')[1].length == 0) {
