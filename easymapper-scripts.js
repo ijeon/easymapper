@@ -93,7 +93,7 @@ var eng_mapsJson = { // GENERATE - Classic Image Map Style
 };
 var eng_helpJson = { // ?
 	title		: 'EASY MAPPER (v20180220)',
-	content		: '<p>Author: Inpyo Jeon (inpyodev@gmail.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
+	content		: '<p>Author: Inpyo Jeon (inpyojeon@hmall.com)</p><p>License: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (Free Open Source License)</p><p>Browser Support: IE10+, Chrome (PC Only)</p><p><a href="https://github.com/ijeon/easymapper" target="_target">https://github.com/ijeon/easymapper</a></p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
@@ -245,7 +245,7 @@ var kor_mapsJson = { // GENERATE - Classic Image Map Style
 };
 var kor_helpJson = { // ?
 	title		: 'EASY MAPPER (v20180220)',
-	content		: '<p>기획/개발: 전인표 (inpyodev@gmail.com)</p><p>라이센스: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (무료 오픈 소스 라이센스)</p><p>지원 브라우저: IE10+, Chrome (PC 전용)</p><p><a href="https://github.com/inpyodev/easymapper" target="_target">https://github.com/inpyodev/easymapper</a></p>',
+	content		: '<p>기획/개발: 전인표 (inpyojeon@hmall.com)</p><p>라이센스: <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GPLv3</a> (무료 오픈 소스 라이센스)</p><p>지원 브라우저: IE10+, Chrome (PC 전용)</p><p><a href="https://github.com/ijeon/easymapper" target="_target">https://github.com/ijeon/easymapper</a></p>',
 	btnSet		: '',
 	btnNoClass	: 'btn-lb-close',
 	btnNoJson	: '',
