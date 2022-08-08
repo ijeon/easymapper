@@ -1,0 +1,55 @@
+/* Reset */
+*:where(:not(html,iframe,canvas,img,svg,video):not(svg *,symbol *)) { all:unset; display:revert; }
+*,*::before,*::after { box-sizing:border-box; }
+a,button { cursor:pointer; }
+ol,ul,menu { list-style:none; }
+table { border-collapse:collapse; }
+textarea { white-space:revert; }
+meter { -webkit-appearance:revert; appearance:revert; }
+::placeholder { color:unset; }
+:where([hidden]) { display:none; }
+:where([contenteditable]) { -moz-user-modify:read-write; -webkit-user-modify:read-write; overflow-wrap:break-word; -webkit-line-break:after-white-space; }
+:where([draggable="true"]) { -webkit-user-drag:element; }
+u { text-decoration:revert; text-underline-position:under; }
+
+/* Setup */
+@font-face { font-family:ngothic; src:url('NanumGothic-Regular.ttf') format('truetype'); }
+:root { font:15px/1 ngothic,dotum; color:#222; }
+html, body { height:100%; }
+
+/* Layout */
+header,
+footer { position:fixed; width:100%; z-index:10; background:#ddd; line-height:2rem; min-width:340px; }
+header { top:0; }
+header p,
+header button,
+header a,
+footer p,
+footer button { padding:0 0.5rem; transition:all 0.1s ease-in-out; }
+header > div,
+footer > div { display: flex; }
+header #title { background:#235981; color:#fff; user-select:none; }
+header #title > button:hover { background:#276591; }
+header #title #info,
+header #menu #reset,
+footer #total { margin-left:auto; }
+header #menu { box-shadow: 0 1px 1px 0 rgba(0,0,0,.25); }
+header #menu > button { position: relative; }
+header #menu > button:hover { background:#ccc; }
+header #menu > button > div { position: absolute; top:2em; left:0; visibility:hidden; background:#ddd; box-shadow: 0 1px 1px 0 rgba(0,0,0,.25); transition:all 0.1s ease-in-out; opacity: 0; }
+header #menu > button:hover > div { visibility: visible; opacity: 1; }
+header #menu > button > div > a { display:block; white-space: nowrap; }
+header #menu > button > div > a:hover { background:#ccc; }
+
+main { position: relative; padding:4rem 0 0 2rem; }
+main #axis { position: fixed; top:2rem; left:0; width:100%; height:100%; }
+main #axis > div { position:absolute; }
+main #axis > div.x { top:0; left:2rem; width:calc(100% - 2rem); height:2rem; border-bottom:1px solid #ddd; }
+main #axis > div.y { top:2rem; left:0; width:2rem; height:calc(100% + 2rem); border-right:1px solid #ddd; }
+
+footer { bottom:0; box-shadow: 0 -1px 1px 0 rgba(0,0,0,.25); }
+footer #filename { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
+footer #total { white-space:nowrap; }
+
+/* Theme */
+body.theme-dark { color:#fff; }

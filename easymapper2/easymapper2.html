@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <title>Easy Mapper 2</title>
+    <meta charset="UTF-8">
+    <link href="easymapper2.css" rel="stylesheet">
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="easymapper2.js" defer></script>
+</head>
+<body class="">
+    <header>
+        <div id="title">
+            <p>&#9998;&nbsp;&nbsp;Easy Mapper</p>
+            <button id="info">?</button>
+            <button id="settings">&#9881;</button>
+        </div>
+        <div id="menu">
+            <button><u>L</u>oad
+                <div>
+                    <a href="javascript:;">Local Image</a>
+                    <a href="javascript:;">Image Url</a>
+                    <a href="javascript:;">Code Parsing</a>
+                </div>
+            </button>
+            <button><u>U</u>nit
+                <div>
+                    <a href="javascript:;">Ratio(%)</a>
+                    <a href="javascript:;">Pixels(px)</a>
+                </div>
+            </button>
+            <button><u>M</u>easure
+                <div>
+                    <a href="javascript:;">On Drag</a>
+                    <a href="javascript:;">On Click</a>
+                </div>
+            </button>
+            <button id="reset"><u>R</u>eset</button>
+            <button id="generate"><u>G</u>enarate</button>
+        </div>
+    </header>
+    <main>
+        <div id="axis">
+            <div class="x"></div>
+            <div class="y"></div>
+        </div>
+        <div id="board">
+
+        </div>
+    </main>
+    <footer>
+        <div>
+            <p id="filename">Loaded File: (Local) <a href="imagename.png" target="_blank"><u>imagename.png</u></a></p>
+            <p></p>
+            <p id="total">Map Count: 3</p>
+        </div>
+    </footer>
+</body>
+</html>
