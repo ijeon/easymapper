@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+    <title>Easy Mapper 2</title>
+    <meta charset="UTF-8">
+    <link href="jquery-ui.min.css" rel="stylesheet">
+    <link href="easymapper2.css" rel="stylesheet">    
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="easymapper2.js" defer></script>
+</head>
+<body class="theme-default unit-ratio measure-drag">
+    <header>
+        <div id="title">
+            <p>&#9998;&nbsp;&nbsp;Easy Mapper</p>
+            <button id="btn-info">?</button>
+            <button id="btn-settings">&#9881;</button>
+        </div>
+        <div id="menu">
+        	<div>
+        		<p><u>L</u>oad</p>
+        		<div>
+        			<button id="btn-load-local">Local Image</button>
+        			<button id="btn-load-url">Image Url</button>
+        			<button id="btn-load-code">Code Parsing</button>
+        		</div>
+        	</div>
+        	<div>
+        		<p><u>U</u>nit</p>
+        		<div>
+        			<input type="radio" name="radio-unit" id="radio-unit-ratio" checked>
+        			<label for="radio-unit-ratio">Ratio(%)</label>
+        			<input type="radio" name="radio-unit" id="radio-unit-pixel">
+        			<label for="radio-unit-pixel">Pixels(px)</label>
+        		</div>
+        	</div>
+        	<div>
+        		<p><u>M</u>easure</p>
+        		<div>
+        			<input type="radio" name="radio-measure" id="radio-measure-drag" checked>
+        			<label for="radio-measure-drag">On Drag</label>
+        			<input type="radio" name="radio-measure" id="radio-measure-click">
+        			<label for="radio-measure-click">On Click</label>
+        		</div>
+        	</div>
+            <button id="btn-reset"><u>R</u>eset</button>
+            <button id="btn-generate"><u>G</u>enarate</button>
+        </div>
+    </header>
+    <main>
+    	<div id="workspace">
+    		<div>
+    			<button id="btn-unit-toggle"></button>
+    		</div>
+    		<div class="axis x">
+    			<div class="scale big"></div>
+    			<div class="scale small"></div>
+    		</div>
+        	<div class="axis y">
+    			<div class="scale big"></div>
+    			<div class="scale small"></div></div>
+        	<div id="board">
+        		<img src="https://dummyimage.com/505/eee">
+        		<canvas id="canvas"></canvas>
+        		<div id="overlay"></div>
+			</div>
+    	</div>
+    </main>
+    <footer>
+        <div>
+            <p id="filename">Loaded File: (Local) <a href="imagename.png" target="_blank"><u>imagename.png</u></a></p>
+            <p id="total">Map Count: 3</p>
+        </div>
+    </footer>
+    
+	<input type="hidden" id="hidden-guide-color">
+	<input type="hidden" id="hidden-guide-color-active">
+	<input type="hidden" id="hidden-guide-color-disabled">
+</body>
+</html>
