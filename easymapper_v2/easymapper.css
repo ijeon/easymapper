@@ -1,0 +1,50 @@
+@charset "UTF-8";
+@font-face { font-family:nanumgothic; src:url('NanumGothic-Regular.ttf') format('truetype'); font-weight:400; }
+
+/* Reset (By Elad Shechter, Edited) */
+*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) { all:unset; display:revert; }
+*, *::before, *::after { box-sizing:border-box; }
+html, body { height:100%; }
+a, button { cursor:pointer; }
+ol, ul, menu { list-style:none; }
+table { border-collapse:collapse; border-spacing:0; }
+input, textarea { -webkit-user-select: auto; }
+textarea { white-space:revert; }
+meter { -webkit-appearance:revert; appearance:revert; }
+u { text-decoration:revert; text-underline-position:under; }
+::placeholder { color:unset; }
+:where([hidden]) { display:none; }
+:where([contenteditable]) { -moz-user-modify:read-write; -webkit-user-modify:read-write; overflow-wrap:break-word; -webkit-line-break:after-white-space; -webkit-user-select:auto; }
+:where([draggable="true"]) { -webkit-user-drag:element; }
+
+/* Theme */
+body.theme-default {
+    --background-title:#34568b; /* Classic Blue */
+    --background-toolbar:#e8eaeb;
+    --background-light:#bdc1c3;
+    --background-dark:#7e878a; /* Monument */
+    --bc-guide-idle:rgba(0,0,255,.75); /* Blue */
+    --bc-guide-active:rgba(255,0,0,.75); /* Red */
+    --bc-guide-disabled:rgba(0,0,0,.75); /* Black */
+}
+
+body { background-color:var(--background-light); }
+header,
+footer { background-color:var(--background-toolbar); }
+header #title,
+#popup .content .header,
+#popup .content .buttons button.btn-confirm { background-color:var(--background-title); }
+
+/* Common */
+.hover-transition { background-image:linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,.1) 100%); background-size:200% 200%; transition:all .1s ease-in-out; }
+.hover-transition:hover { background-image:linear-gradient(rgba(0,0,0,.1), rgba(0,0,0,.1)); }
+
+/* Layout */
+:root { font:15px/1 nanumgothic; }
+body { padding:4rem 0 2rem; }
+
+header,
+footer { position:fixed; left:0; width:100%; line-height:2rem; min-width:340px; z-index:8; }
+header { top:0; }
+
+footer { bottom:0; }
