@@ -31,7 +31,6 @@ footer,
 main #workspace #board img,
 #popup .content .header,
 #popup .content .buttons { user-drag:none; -webkit-user-drag:none; user-select:none; }
-
 header { top:0; }
 header p,
 header button,
@@ -41,12 +40,12 @@ main #workspace #btn-unit-toggle,
 #popup .content .header p,
 #popup .content .buttons button { padding:0 0.5rem; transition:all .1s ease-in-out; }
 
-
 header > div,
 footer > div { display: flex; }
 header #title,
-#popup .content .header{ background-color:var(--bg-title); color:#fff; }
-#popup .content .buttons button.btn-confirm { background-color: #46659c; color:#fff; }
+#popup .content .header,
+#popup .content .buttons button.btn-confirm { background-color:var(--bg-title); color:#fff; }
+
 #popup { padding:1px; background-color: #ccc; border:2px solid #ddd; }
 #popup .content .buttons button { background-image: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,.1) 100%); background-size:200% 200%; }
 
