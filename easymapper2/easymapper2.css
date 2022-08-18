@@ -143,7 +143,4 @@ body.theme-default #hidden-guide-color-active { color:rgba(255,0,0,.75); }
 body.theme-default #hidden-guide-color-disabled { color:black; }
 body.theme-default main #workspace #btn-unit-toggle { background:#fff; }
 body.theme-default main #workspace #btn-unit-toggle:hover { background:#eee; }
-body.theme-default main #workspace #btn-unit-toggle,
-body.theme-default main #workspace .axis,
-body.theme-default main #workspace .axis i { border-color:#ccc; }
 body.theme-default main #workspace #board #canvas .guide { background:blue; }

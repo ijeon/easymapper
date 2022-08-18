@@ -12,7 +12,7 @@
     <body data-theme="default" data-unit="ratio" data-measure="drag">
         <header>
             <div id="title">
-                <p>&#9998;&nbsp;&nbsp;Easy Mapper</p>
+                <p>&#9998;&nbsp;&nbsp;Easy Mapper v2</p>
                 <button id="btn-info">?</button>
                 <button id="btn-settings">&#9881;</button>
             </div>
@@ -47,50 +47,48 @@
                 <button id="btn-generate"><u>G</u>enarate</button>
             </div>
         </header>
-<main>
-    <div id="workspace">
-        <div>
-            <button id="btn-unit-toggle"></button>
-        </div>
-        <div class="axis x">
-            <div class="scale big"></div>
-            <div class="scale small"></div>
-        </div>
-        <div class="axis y">
-            <div class="scale big"></div>
-            <div class="scale small"></div></div>
-        <div id="board">
-            <img src="https://dummyimage.com/505/eee">
-            <canvas id="canvas"></canvas>
-            <div id="overlay"></div>
-        </div>
-    </div>
-</main>
-<footer>
-    <div>
-        <p id="filename">Loaded File: (Local) <a href="imagename.png" target="_blank"><u>imagename.png</u></a></p>
-        <p id="total">Map Count: 3</p>
-    </div>
-</footer>
-<div id="dim"></div>
-<div id="popup">
-    <div class="content" id="popup-settings">
-        <div class="header">
-            <p>Settings</p>
-            <button class="btn-popup-close">&#10005;</button>
-        </div>
-        <div class="body">
-            <p>이름</p>
-        </div>
-        <div class="buttons">
-            <button class="btn-cancel">Discard</button>
-            <button class="btn-confirm">Apply</button>
-        </div>
-    </div>
-</div>
-
-<input type="hidden" id="hidden-guide-color">
-<input type="hidden" id="hidden-guide-color-active">
-<input type="hidden" id="hidden-guide-color-disabled">
-</body>
+		<main>
+		    <div id="workspace">
+		        <div>
+		            <button id="btn-unit-toggle"></button>
+		        </div>
+		        <div class="axis x">
+		            <div class="scale big"></div>
+		            <div class="scale small"></div>
+		        </div>
+		        <div class="axis y">
+		            <div class="scale big"></div>
+		            <div class="scale small"></div></div>
+		        <div id="board">
+		            <img src="https://dummyimage.com/505/eee">
+		            <canvas id="canvas"></canvas>
+		            <div id="overlay"></div>
+		        </div>
+		    </div>
+		</main>
+		<footer>
+		    <div>
+		        <p id="filename">Loaded File: (Local) <a href="imagename.png" target="_blank"><u>imagename.png</u></a></p>
+		        <p id="total">Map Count: 3</p>
+		    </div>
+		</footer>
+		<div id="dim"></div>
+		<div class="popup" id="popup-info">
+	        <div class="header">
+	            <p>Easy Mapper v2 (Build: 20220815b1)</p>
+	            <button class="btn-popup-close">&#10005;</button>
+	        </div>
+	        <div class="body">
+	            <p>Author: Inpyo Jeon (<a href="mailto:inpyowho@gmail.com"><u>inpyowho@gmail.com</u></a>)</p>
+	            <p>License: MIT License (Open Source License)</p>
+	            <p>Dependancy: jQuery v3.6.0, jQuery UI v1.13.2</p>
+	            <p>Browser Support: Chrome/Edge 103+, Firefox</p>
+	            <p>Github: <a href="https://github.com/ijeon/easymapper/" target="_blank"><u>https://github.com/ijeon/easymapper/</u></a></p>
+	        </div>
+	        <div class="buttons">
+	            <button class="btn-cancel">Discard</button>
+	            <button class="btn-confirm">Apply</button>
+	        </div>
+		</div>
+	</body>
 </html>
