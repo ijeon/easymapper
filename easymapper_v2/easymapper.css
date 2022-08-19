@@ -20,9 +20,8 @@ u { text-decoration:revert; text-underline-position:under; }
 /* Theme */
 body { /* Default */
 	--bd-axis:#cccccc;
-    --bd-guide-idle:rgba(0,0,255,.75); /* Blue */
-    --bd-guide-active:rgba(255,0,0,.75); /* Red */
-    --bd-guide-disabled:rgba(0,0,0,.75); /* Black */    
+    --bd-guide:rgba(0,0,255,.75); /* Blue */
+    --bd-guide-dq:rgba(255,0,0,.75); /* Red */
     --adjust-ratio:7%;
     --tt-default:#222222;
     --tt-title:#ffffff;
@@ -175,8 +174,7 @@ body[data-unit=pixel] main #workspace .axis.y .scale.big i { height:100px; }
 main #workspace #board { position:relative; }
 main #workspace #board #canvas,
 main #workspace #board #overlay { position:absolute; top:0; left:0; width:100%; height:100%; cursor:crosshair; }
-main #workspace #board #overlay .map { position:absolute; border:1px dashed #fff; background:rgba(56,150,217,.5); cursor:grab; }
-/* main #workspace #board #overlay .map { position:absolute; border:1px dashed #fff; background:rgba(56,150,217,.5); cursor:grab; } */
+main #workspace #board #overlay .map { position:absolute; border:2px solid rgba(0,0,0,.2); background:rgba(56,150,217,.2); cursor:grab; }
 
 footer { bottom:0; }
 footer #filename { text-overflow:ellipsis; overflow:hidden; }
