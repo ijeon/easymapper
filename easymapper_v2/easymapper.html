@@ -86,6 +86,36 @@
 	            <p>Github: <a href="https://github.com/ijeon/easymapper/" target="_blank"><u>https://github.com/ijeon/easymapper/</u></a></p>
 	        </div>
 	        <div class="buttons">
+	            <button class="btn-cancel">Close</button>
+	        </div>
+		</div>
+        <div class="popup clear" id="popup-map-link">
+	        <div class="header">
+	            <p>Edit Map Link</p>
+	            <button class="btn-popup-close">&#10005;</button>
+	        </div>
+	        <div class="body">
+	            <input type="text" value="https://">
+                <ul>
+                    <li>
+                        <input type="radio" name="radio-map-target" id="radio-map-target-blank" checked>
+                        <label for="radio-map-target-blank">Open the link in a new tab</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="radio-map-target" id="radio-map-target-self">
+                        <label for="radio-map-target-self">Open the link in the same frame</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="radio-map-target" id="radio-map-target-parent">
+                        <label for="radio-map-target-parent">Open the link in the parent frame</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="radio-map-target" id="radio-map-target-top">
+                        <label for="radio-map-target-top">Open the link in the same tab</label>
+                    </li>
+                </ul>
+	        </div>
+	        <div class="buttons">
 	            <button class="btn-cancel">Discard</button>
 	            <button class="btn-confirm">Apply</button>
 	        </div>
