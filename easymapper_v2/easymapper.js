@@ -1,7 +1,7 @@
 // 옵션
-var _theme,
-	_unit,
-	_measure,
+var _theme, // 테마
+	_unit, // 단위(퍼센트, 픽셀)
+	_measure, // 작도 방식(드래그, 클릭)
 	_unitIsRatio = new Boolean(),
 	_measureIsDrag = new Boolean();
 
@@ -12,9 +12,10 @@ var $body = $('body'),
 	$scale = $('.scale'),
 	$canvas = $('#canvas'),
 	$overlay = $('#overlay'),
+    $total = $('#total'),
 	$dim = $('#dim'),
 	$popup = $('.popup'),
-    $total = $('#total');
+    $inputFile = $('#input-load-local');
 
 // 전역 변수
 var source = new Array(),
@@ -24,7 +25,7 @@ var source = new Array(),
 	isDrawing = false,
     isDrawable = true,
     map_id = 0,
-    initialHtml;
+    filePathParsed;
 
 // Canvas 선언
 var canvas = document.getElementById("canvas"),
@@ -35,14 +36,32 @@ $(window)
     .on('load', init);
 
 $(document)
-    .on('mousemove', getPos)
-	.on('click', 'button', btnEvents)
-	.on('change', '#menu input[type=radio]', optChange)
-	.on('mousedown', '#overlay', drawStart)
-	.on('mouseup', drawEnd)
-    .on('contextmenu', drawCancel)
-    .on('mouseenter mouseleave', '.map', drawStop)
-    .on('click', '#dim', closePopup);
+    .on('mousemove', getPos) // 마우스 커서 포지션
+	.on('click', 'button', btnEvents) // 버튼 이벤트
+	.on('change', '#menu input[type=radio]', optChange) // 메뉴 옵션 선택
+    .on('change', '#input-load-local', loadFile) // 로컬 파일 로드
+	.on('mousedown', '#overlay', drawStart) // 작도 시작
+	.on('mouseup', drawEnd) // 작도 종료
+    .on('mouseenter mouseleave', '.map', drawStop) // 맵 호버시 작도 방지
+    .on('contextmenu', drawCancel) // 우클릭시 작도 취소
+    .on('click', '#dim', closePopup); // 팝업 닫기
+
+function loadFile(e){ // 로컬 파일 로드
+    var filePath = $inputFile.val(),
+        $label = $inputFile.siblings('label'),
+        url = window.webkitURL || window.URL;
+    filePathParsed = url.createObjectURL(e.target.files[0]);
+
+    console.log(filePathParsed)
+
+    if (filePath){
+        $label.text(filePath.replace('fakepath', '...'));
+        $label.parent().addClass('loaded');
+    } else{
+        $label.text('Drag & Drop or Click Here to Load');
+        $label.parent().removeClass('loaded');
+    }
+}
 
 // 함수
 function init(){ // 초기화
@@ -242,10 +261,9 @@ function setOptions(type, value){ // 옵션 설정
 
 function openPopup(id){ // 팝업 열기
     var $thisPopup = $('#popup-' + id);
-    initialHtml = $thisPopup.html();
 
 	$dim.add($thisPopup).addClass('active');
-    $thisPopup.find('input, textarea').first().select();
+    $thisPopup.find('input[type=text], textarea').first().select();
 }
 
 function closePopup(){ // 팝업 닫기
@@ -253,8 +271,6 @@ function closePopup(){ // 팝업 닫기
 
 	$dim.add($popup).removeClass('active');
 
-    if($thisPopup.hasClass('clear'))
-        $thisPopup.html(initialHtml);
 }
 
 function optChange(){ // 라디오 버튼
@@ -296,6 +312,7 @@ function btnEvents(){ // 버튼 이벤트
         case 'info': // 정보
         case 'settings': // 설정
         case 'map-link': // 맵 링크
+        case 'load-local': // 로컬 이미지 로드
             openPopup(name);
     
             break;

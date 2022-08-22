@@ -99,7 +99,8 @@ function loadImage(){ // Load Source Image
 }
 function parsePath(e){ // Get Source Image Filepath
 	var URL = window.webkitURL || window.URL;
-    filepath = URL.createObjectURL(e.target.files[0]);    
+    filepath = URL.createObjectURL(e.target.files[0]);
+    console.log(filepath)
     $('#label-img-local > p').text('File loaded');
     $('#label-img-local').addClass('active');
 }

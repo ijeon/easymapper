@@ -60,7 +60,7 @@
 		            <div class="scale big"></div>
 		            <div class="scale small"></div></div>
 		        <div id="board">
-		            <img src="https://dummyimage.com/505/eee">
+		            <img src="https://dummyimage.com/1505/eee">
 		            <canvas id="canvas"></canvas>
 		            <div id="overlay"></div>
 		        </div>
@@ -89,7 +89,7 @@
 	            <button class="btn-cancel">Close</button>
 	        </div>
 		</div>
-        <div class="popup clear" id="popup-map-link">
+        <div class="popup" id="popup-map-link">
 	        <div class="header">
 	            <p>Edit Map Link</p>
 	            <button class="btn-popup-close">&#10005;</button>
@@ -120,5 +120,21 @@
 	            <button class="btn-confirm">Apply</button>
 	        </div>
 		</div>
+        <div class="popup" id="popup-load-local">
+            <div class="header">
+                <p>Load Resource from Local Storage</p>
+                <button class="btn-popup-close">&#10005;</button>
+            </div>
+            <div class="body">
+                <div class="load-local-wrap">
+                    <input type="file" id="input-load-local">
+                    <label for="input-load-local">Drag &amp; Drop or Click Here to Load</label>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="btn-cancel">Discard</button>
+                <button class="btn-confirm">Apply</button>
+            </div>
+        </div>
 	</body>
 </html>

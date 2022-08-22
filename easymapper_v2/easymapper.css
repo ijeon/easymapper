@@ -87,13 +87,17 @@ header label,
 header #menu > div > div,
 main #workspace #btn-unit-toggle,
 .popup .buttons button,
-.popup .header .btn-popup-close { transition:all .15s ease-in-out; } /* Transition */
+.popup .header .btn-popup-close,
+.popup .body .load-local-wrap label { transition:all .15s ease-in-out; } /* Transition */
 header,
 header #menu > div > div,
 main #workspace,
 footer,
 .popup { box-shadow:0 0 0.3rem 0 rgba(0,0,0,.3); } /* Box Shadow */
 .popup .body input[type=text] { border-color:#aaaaaa; }
+.popup .body .load-local-wrap label { border-color:#999999; color:#999999; }
+.popup .body .load-local-wrap:hover label,
+.popup .body .load-local-wrap.loaded label { border-color:#555555; color:#222222; }
 #dim { background-color:rgba(0,0,0,.5); }
 
 /* Layers */
@@ -203,6 +207,8 @@ footer #filename { text-overflow:ellipsis; overflow:hidden; }
 #dim.active,
 .popup.active { display:block; }
 .popup .body { padding:0.6rem; display:block; line-height:1.5rem; }
+.popup .buttons { flex-wrap:wrap; }
+.popup .buttons button { line-height:3rem; flex-basis:50%; flex-grow:1; text-align:center; }
 .popup .body input[type=text] { width:100%; border-width:1px; border-style:solid; line-height:2rem; padding:0 0.5rem; }
 .popup .body ul { margin-top:0.5rem; }
 .popup .body ul li { font-size:0; }
@@ -210,5 +216,7 @@ footer #filename { text-overflow:ellipsis; overflow:hidden; }
 .popup .body ul li input[type=radio] + label { display:inline-block; vertical-align:middle; }
 .popup .body ul li input[type=radio] { appearance:revert; margin-right:0.5rem; }
 .popup .body ul li input[type=radio] + label { font-size:1rem; line-height:2rem; }
-.popup .buttons { flex-wrap:wrap; }
-.popup .buttons button { line-height:3rem; flex-basis:50%; flex-grow:1; text-align:center; }
+.popup .body .load-local-wrap { position:relative; cursor:pointer; }
+.popup .body .load-local-wrap input[type=file] { position:absolute; width:100%; height:100%; top:0; left:0; visibility:hidden; }
+.popup .body .load-local-wrap label { width:100%; border-width:2px; border-style:dashed; display:block; padding:40px 0; text-align:center; }
+.popup .body .load-local-wrap.loaded label { border-style:solid; }
