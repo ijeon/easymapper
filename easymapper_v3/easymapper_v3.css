@@ -1,0 +1,45 @@
+@charset "UTF-8";
+@font-face { font-family:nanumgothic; src:url('NanumGothic-Regular.ttf') format('truetype'); font-weight:400; }
+*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) { all:unset; display:revert; }
+*, *::before, *::after { box-sizing:border-box; user-drag:none; -webkit-user-drag:none; user-select:none; }
+html, body { height:100%; }
+a, button, label, input:is([type=radio], [type=checkbox]) { cursor:pointer; }
+ol, ul, menu { list-style:none; }
+table { border-collapse:collapse; border-spacing:0; }
+input, textarea { -webkit-user-select:auto; }
+textarea { white-space:revert; }
+meter { -webkit-appearance:revert; appearance:revert; }
+u { text-decoration:revert; text-underline-position:under; }
+::placeholder { color:unset; }
+:where([hidden]) { display:none; }
+:where([contenteditable]) { -moz-user-modify:read-write; -webkit-user-modify:read-write; overflow-wrap:break-word; -webkit-line-break:after-white-space; -webkit-user-select:auto; }
+:where([draggable="true"]) { -webkit-user-drag:element; }
+:root { font:16px/1 nanumgothic; }
+
+body {
+    --bg-80:rgba(0,0,0,.8); --bg-70:rgba(0,0,0,.7); --bg-60:rgba(0,0,0,.6); --bg-50:rgba(0,0,0,.5);
+    --bg-40:rgba(0,0,0,.4); --bg-30:rgba(0,0,0,.3); --bg-20:rgba(0,0,0,.2); --bg-10:rgba(0,0,0,.1);
+}
+
+#dim { position:fixed; width:100%; height:100%; background-color:var(--bg-50); z-index:10; }
+#dim .popup { z-index:11; }
+#dim,
+#dim .popup { display:none; }
+#dim.active,
+#dim .popup.active { display:block; }
+header { background-color:var(--bg-10); display:flex; }
+header nav { position:relative; }
+header nav p,
+header nav div button,
+header nav div input[type=radio] + label { display:block; padding:0.75rem; white-space:nowrap; width:100%; }
+header nav:hover p,
+header nav div button:hover,
+header nav div input[type=radio] + label:hover { background-color:var(--bg-10); }
+header nav p { cursor:pointer; }
+header nav div { position:absolute; top:2.5rem; left:0; background-color:var(--bg-10); visibility:hidden; }
+header nav:hover div { visibility:visible; }
+
+header nav div input[type=radio] { display:none; }
+header nav div input[type=radio] + label { position:relative; padding-left:1.5rem; }
+header nav div input[type=radio] + label::before { content:''; position:absolute; left:0.7rem; top:0.8rem; }
+header nav div input[type=radio]:checked + label::before { content:'✓'; font-size:0.75rem; }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Easy Mapper v3</title>
+    <meta charset="UTF-8">
+    <link href="jquery-ui.min.css" rel="stylesheet">
+    <link href="easymapper_v3.css" rel="stylesheet">
+    <script src="jquery-3.6.1.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="easymapper_v3.js" defer></script>
+</head>
+<body>
+    <div id="dim">
+        <div class="popup">
+
+        </div>
+    </div>
+    <header>
+        <nav>
+            <p>불러오기</p>
+            <div>
+                <button>이미지 업로드</button>
+                <button>이미지 URL</button>
+                <button>동영상 URL</button>
+                <button>소스 코드로부터</button>
+            </div>
+        </nav>
+        <nav>
+            <p>저장하기</p>
+            <div>
+                <button>HOMS에 삽입</button>
+                <button>소스 코드 보기</button>
+                <button>텍스트 파일로 저장</button>
+            </div>
+        </nav>
+        <nav>
+            <p>좌표 단위</p>
+            <div>
+                <input type="radio" name="radio-unit" id="radio-unit-ratio" checked><label for="radio-unit-ratio">퍼센트(%)</label>
+                <input type="radio" name="radio-unit" id="radio-unit-fixed"><label for="radio-unit-fixed">픽셀(px)</label>
+            </div>
+        </nav>
+        <nav>
+            <p>매핑 방식</p>
+            <div>
+                <input type="radio" name="radio-draw" id="radio-draw-drag" checked><label for="radio-draw-drag">드래그</label>
+                <input type="radio" name="radio-draw" id="radio-draw-click"><label for="radio-draw-click">극점 클릭</label>
+            </div>
+        </nav>
+        <nav>
+            <p>도움말</p>
+            <div>
+                <button>UI 설정</button>
+                <button>단축키 일람</button>
+                <button>버전 정보</button>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>
