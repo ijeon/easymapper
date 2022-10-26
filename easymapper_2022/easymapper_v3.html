@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Easy Mapper v3</title>
+    <meta charset="UTF-8">
+    <link href="jquery-ui.min.css" rel="stylesheet">
+    <link href="easymapper_v3.css" rel="stylesheet">
+    <script src="jquery-3.6.1.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="easymapper_v3.js" defer></script>
+</head>
+<body>
+<!-- 딤 스크린 -->
+<div id="dim" class="active"></div>
+
+<!-- 팝업: 미디어 관리 -->
+<div class="popup active" id="popup-load-dashboard">
+    <button class="popup-close">&#10005;</button>
+    <h1>미디어 관리</h1>
+    <div class="popup-panel">
+        <ul id="media-list">
+            <li class="media-item" type="" path="">
+                <div class="media-input" type="media-upload">
+                    <label class="media-input-filepath">
+                        <input class="media-input-file" type="file" value="">
+                        <span>PC에서 업로드</span>
+                    </label>
+                    <button class="media-input-apply">등록</button>
+                    <button class="media-input-discard">취소</button>
+                </div>
+                <div class="media-input" type="media-url">
+                    <input class="media-input-url" type="text" value="" spellcheck="false">
+                    <button class="media-input-apply">등록</button>
+                    <button class="media-input-discard">취소</button>
+                </div>
+                <span class="media-handle">&#8645;</span>
+                <span class="media-path">등록된 미디어가 없습니다.</span>
+                <button class="media-upload">업로드</button>
+                <button class="media-url">URL</button>
+                <button class="media-delete">&#10005;</button>
+            </li>
+        </ul>
+        <button id="media-add">미디어 추가</button>
+    </div>
+    <div class="popup-btnset">
+        <button class="popup-apply">적용</button>
+        <button class="popup-discard">취소</button>
+    </div>
+</div>
+
+<!-- 팝업: 소스 코드 삽입 -->
+<div class="popup" id="popup-load-source">
+    <button class="popup-close">&#10005;</button>
+    <h1>소스 코드 삽입</h1>
+    <div class="popup-panel">
+        <textarea id="source-import" rows="6" spellcheck="false"></textarea>
+    </div>
+    <div class="popup-btnset">
+        <button class="popup-apply">적용</button>
+        <button class="popup-discard">취소</button>
+    </div>
+</div>
+
+<!-- 헤더 -->
+<header>
+    <nav>
+        <p>불러오기</p>
+        <div>
+            <button id="load-dashboard">미디어 관리</button>
+            <button id="load-source">소스 코드 삽입</button>
+        </div>
+    </nav>
+    <nav>
+        <p>저장하기</p>
+        <div>
+            <button id="save-cookie">미리보기</button>
+            <button id="save-source">소스 코드 생성</button>
+        </div>
+    </nav>
+    <nav>
+        <p>좌표 단위</p>
+        <div>
+            <input type="radio" name="radio-unit" id="radio-unit-ratio" checked><label for="radio-unit-ratio">퍼센트(%)</label>
+            <input type="radio" name="radio-unit" id="radio-unit-fixed"><label for="radio-unit-fixed">픽셀(px)</label>
+        </div>
+    </nav>
+    <nav>
+        <p>매핑 방식</p>
+        <div>
+            <input type="radio" name="radio-draw" id="radio-draw-drag" checked><label for="radio-draw-drag">드래그</label>
+            <input type="radio" name="radio-draw" id="radio-draw-click"><label for="radio-draw-click">극점 클릭</label>
+        </div>
+    </nav>
+    <nav>
+        <p>도움말</p>
+        <div>
+            <button id="help-shortcut">단축키 일람</button>
+            <button id="help-version">버전 정보</button>
+        </div>
+    </nav>
+</header>
+
+<!-- 메인 -->
+<main>
+    <div id="board">
+        <div id="image">
+            <img src="sampleimg.jpg">
+        </div>
+    </div>
+</main>
+</body>
+</html>

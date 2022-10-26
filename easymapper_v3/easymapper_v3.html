@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Easy Mapper v3</title>
@@ -11,51 +11,115 @@
     <script src="easymapper_v3.js" defer></script>
 </head>
 <body>
-    <div id="dim">
-        <div class="popup">
+    <div id="wrap">
+        <!-- 툴바 -->
+        <nav id="toolbar">
+            <button class="tool icon" id="nav-img" title="이미지 대시보드"></button>
+            <button class="tool icon active" id="nav-src" title="소스 코드"></button>
+            <button class="tool icon" id="nav-prev" title="미리보기"></button>
+            <button class="tool icon" id="nav-set" title="설정"></button>
+        </nav>
+        <main>
+            <div id="dim"></div>
 
-        </div>
+            <!-- 서랍 -->
+            <div id="drawer">
+                <!-- 서랍: 이미지 대시보드 -->
+                <article id="nav-img-pane" class="active">
+                    <h1>이미지 대시보드</h1>
+                    <ul id="img-list">
+                        <li class="img-list-item loaded">
+                            <i class="img-move icon"></i>
+                            <span class="img-path" title="경로시작/경로명1/경로명2/파일명.확장자">경로시작/.../파일명.확장자</span>
+                            <button class="img-upload icon" title="이미지 업로드"></button>
+                            <button class="img-delete icon" title="이미지 삭제"></button>
+                        </li>
+                        <li class="img-list-item">
+                            <i class="img-move icon"></i>
+                            <span class="img-path">등록된 이미지가 없습니다.</span>
+                            <button class="img-upload icon" title="이미지 업로드"></button>
+                            <button class="img-delete icon" title="이미지 삭제"></button>
+                        </li>
+                    </ul>
+                    <div class="btnset mb2">
+                        <button id="img-add" title="이미지 추가">
+                            <i class="icon"></i><span>이미지 추가</span>
+                        </button>
+                    </div>
+                    <div class="btnset bottom">
+                        <button class="btn-apply" title="적용">
+                            <span>적용</span>
+                        </button>
+                        <button class="btn-discard" title="취소">
+                            <span>취소</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- 서랍: 소스 코드 -->
+                <article id="nav-src-pane" class="active">
+                    <h1>소스 코드</h1>
+                    <h2>현재 코드:</h2>
+                    <textarea class="src-code" id="src-asis" rows="6" spellcheck="false" disabled></textarea>
+                    <div class="btnset">
+                        <button id="homs-src" title="HOMS 본문에 삽입">
+                            <i class="icon"></i><span>HOMS 본문에 삽입</span>
+                        </button>
+                    </div>
+                    <div class="btnset mb2">
+                        <button id="save-src" title="텍스트 파일로 저장">
+                            <i class="icon"></i><span>텍스트 파일로 저장</span>
+                        </button>
+                    </div>
+                    <h2>적용될 코드:</h2>
+                    <textarea class="src-code" id="src-tobe" rows="6" spellcheck="false"></textarea>
+                    <div class="btnset">
+                        <button id="load-src" title="소스 코드 불러오기">
+                            <i class="icon"></i><span>소스 코드 업로드</span>
+                        </button>
+                    </div>
+                    <div class="btnset mb2">
+                        <button id="reset-src" title="현재 코드로 복원">
+                            <i class="icon"></i><span>현재 코드로 복원</span>
+                        </button>
+                    </div>
+                    <div class="btnset bottom">
+                        <button class="btn-apply" title="저장">
+                            <span>적용</span>
+                        </button>
+                        <button class="btn-discard" title="취소">
+                            <span>취소</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- 서랍: 미리보기 -->
+                <article id="nav-prev-pane" class="active">
+                    <h1>미리보기</h1>
+                    <div class="btnset">
+                        <button id="prev-pc" title="데스크탑 해상도">
+                            <i class="icon"></i><span>데스크탑 해상도</span>
+                        </button>
+                    </div>
+                    <div class="btnset mb2">
+                        <button id="prev-mo" title="스마트폰 해상도">
+                            <i class="icon"></i><span>스마트폰 해상도</span>
+                        </button>
+                    </div>
+                    <h2>해상도 임의 설정(가로 픽셀):</h2>
+                    <div class="btnset">
+                        <div id="prev-form">
+                            <input type="number"><span>PX</span>
+                        </div>
+                        <button id="prev-custom" title="미리보기">
+                            <i class="icon"></i><span>미리보기</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+            <div class="ruler x"></div>
+            <div class="ruler y"></div>
+        </main>
     </div>
-    <header>
-        <nav>
-            <p>불러오기</p>
-            <div>
-                <button>이미지 업로드</button>
-                <button>이미지 URL</button>
-                <button>동영상 URL</button>
-                <button>소스 코드로부터</button>
-            </div>
-        </nav>
-        <nav>
-            <p>저장하기</p>
-            <div>
-                <button>HOMS에 삽입</button>
-                <button>소스 코드 보기</button>
-                <button>텍스트 파일로 저장</button>
-            </div>
-        </nav>
-        <nav>
-            <p>좌표 단위</p>
-            <div>
-                <input type="radio" name="radio-unit" id="radio-unit-ratio" checked><label for="radio-unit-ratio">퍼센트(%)</label>
-                <input type="radio" name="radio-unit" id="radio-unit-fixed"><label for="radio-unit-fixed">픽셀(px)</label>
-            </div>
-        </nav>
-        <nav>
-            <p>매핑 방식</p>
-            <div>
-                <input type="radio" name="radio-draw" id="radio-draw-drag" checked><label for="radio-draw-drag">드래그</label>
-                <input type="radio" name="radio-draw" id="radio-draw-click"><label for="radio-draw-click">극점 클릭</label>
-            </div>
-        </nav>
-        <nav>
-            <p>도움말</p>
-            <div>
-                <button>UI 설정</button>
-                <button>단축키 일람</button>
-                <button>버전 정보</button>
-            </div>
-        </nav>
-    </header>
 </body>
 </html>
