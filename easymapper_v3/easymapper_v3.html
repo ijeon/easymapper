@@ -15,27 +15,29 @@
         <!-- 툴바 -->
         <nav id="toolbar">
             <button class="tool icon" id="nav-img" title="이미지 대시보드"></button>
-            <button class="tool icon active" id="nav-src" title="소스 코드"></button>
+            <button class="tool icon" id="nav-src" title="소스 코드"></button>
             <button class="tool icon" id="nav-prev" title="미리보기"></button>
             <button class="tool icon" id="nav-set" title="설정"></button>
         </nav>
-        <main>
-            <div id="dim"></div>
+        <main class="dimmed">
+            <div id="dim">
+                <button id="btn-close" class="icon"></button>
+            </div>
 
             <!-- 서랍 -->
             <div id="drawer">
                 <!-- 서랍: 이미지 대시보드 -->
-                <article id="nav-img-pane" class="active">
+                <article id="nav-img-pane">
                     <h1>이미지 대시보드</h1>
                     <ul id="img-list">
                         <li class="img-list-item loaded">
-                            <i class="img-move icon"></i>
+                            <i class="img-move icon" title="이미지 순서 변경"></i>
                             <span class="img-path" title="경로시작/경로명1/경로명2/파일명.확장자">경로시작/.../파일명.확장자</span>
                             <button class="img-upload icon" title="이미지 업로드"></button>
                             <button class="img-delete icon" title="이미지 삭제"></button>
                         </li>
                         <li class="img-list-item">
-                            <i class="img-move icon"></i>
+                            <i class="img-move icon" title="이미지 순서 변경"></i>
                             <span class="img-path">등록된 이미지가 없습니다.</span>
                             <button class="img-upload icon" title="이미지 업로드"></button>
                             <button class="img-delete icon" title="이미지 삭제"></button>
@@ -57,7 +59,7 @@
                 </article>
 
                 <!-- 서랍: 소스 코드 -->
-                <article id="nav-src-pane" class="active">
+                <article id="nav-src-pane">
                     <h1>소스 코드</h1>
                     <h2>현재 코드:</h2>
                     <textarea class="src-code" id="src-asis" rows="6" spellcheck="false" disabled></textarea>
@@ -94,7 +96,7 @@
                 </article>
 
                 <!-- 서랍: 미리보기 -->
-                <article id="nav-prev-pane" class="active">
+                <article id="nav-prev-pane">
                     <h1>미리보기</h1>
                     <div class="btnset">
                         <button id="prev-pc" title="데스크탑 해상도">
@@ -111,8 +113,47 @@
                         <div id="prev-form">
                             <input type="number"><span>PX</span>
                         </div>
-                        <button id="prev-custom" title="미리보기">
-                            <i class="icon"></i><span>미리보기</span>
+                        <button id="prev-custom" title="임의 해상도">
+                            <i class="icon"></i><span>임의 해상도</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- 서랍: 설정 -->
+                <article id="nav-set-pane" class="active">
+                    <h1>설정</h1>
+                    <div class="radioset mb1">
+                        <h2>눈금 단위:</h2>
+                        <input type="radio" id="radio-unit-ratio" name="radio-unit" checked>
+                        <label for="radio-unit-ratio" title="비율에 따라 맵을 제도합니다. 모바일 환경에서도 정상적으로 출력됩니다.">
+                            <i class="icon"></i>
+                            <span>퍼센트</span>
+                        </label>
+                        <input type="radio" id="radio-unit-pixel" name="radio-unit">
+                        <label for="radio-unit-pixel" title="고정값으로 맵을 제도합니다. 모바일 환경에서는 정상적으로 출력되지 않을 수 있습니다.">
+                            <i class="icon"></i>
+                            <span>픽셀</span>
+                        </label>
+                    </div>
+                    <div class="radioset">
+                        <h2>제도 방식:</h2>
+                        <input type="radio" id="radio-draw-drag" name="radio-draw" checked>
+                        <label for="radio-draw-drag" title="비율에 따라 맵을 제도합니다. 모바일 환경에서도 정상적으로 출력됩니다.">
+                            <i class="icon"></i>
+                            <span>드래그</span>
+                        </label>
+                        <input type="radio" id="radio-draw-click" name="radio-draw">
+                        <label for="radio-draw-click" title="고정값으로 맵을 제도합니다. 모바일 환경에서는 정상적으로 출력되지 않을 수 있습니다.">
+                            <i class="icon"></i>
+                            <span>클릭</span>
+                        </label>
+                    </div>
+                    <div class="btnset bottom">
+                        <button class="btn-apply" title="적용">
+                            <span>적용</span>
+                        </button>
+                        <button class="btn-discard" title="취소">
+                            <span>취소</span>
                         </button>
                     </div>
                 </article>
