@@ -19,7 +19,9 @@
             <button class="tool icon" id="nav-prev" title="미리보기"></button>
             <button class="tool icon" id="nav-set" title="설정"></button>
         </nav>
-        <main class="dimmed">
+
+        <!-- 메인 -->
+        <main>
             <div id="dim">
                 <button id="btn-close" class="icon"></button>
             </div>
@@ -29,7 +31,7 @@
                 <!-- 서랍: 이미지 대시보드 -->
                 <article id="nav-img-pane">
                     <h1>이미지 대시보드</h1>
-                    <ul id="img-list">
+                    <ul id="img-list" class="mb15">
                         <li class="img-list-item loaded">
                             <i class="img-move icon" title="이미지 순서 변경"></i>
                             <span class="img-path" title="경로시작/경로명1/경로명2/파일명.확장자">경로시작/.../파일명.확장자</span>
@@ -68,7 +70,7 @@
                             <i class="icon"></i><span>HOMS 본문에 삽입</span>
                         </button>
                     </div>
-                    <div class="btnset mb2">
+                    <div class="btnset mb15">
                         <button id="save-src" title="텍스트 파일로 저장">
                             <i class="icon"></i><span>텍스트 파일로 저장</span>
                         </button>
@@ -103,7 +105,7 @@
                             <i class="icon"></i><span>데스크탑 해상도</span>
                         </button>
                     </div>
-                    <div class="btnset mb2">
+                    <div class="btnset mb15">
                         <button id="prev-mo" title="스마트폰 해상도">
                             <i class="icon"></i><span>스마트폰 해상도</span>
                         </button>
@@ -111,7 +113,7 @@
                     <h2>해상도 임의 설정(가로 픽셀):</h2>
                     <div class="btnset">
                         <div id="prev-form">
-                            <input type="number"><span>PX</span>
+                            <input type="number"><span>px</span>
                         </div>
                         <button id="prev-custom" title="임의 해상도">
                             <i class="icon"></i><span>임의 해상도</span>
@@ -120,33 +122,52 @@
                 </article>
 
                 <!-- 서랍: 설정 -->
-                <article id="nav-set-pane" class="active">
+                <article id="nav-set-pane">
                     <h1>설정</h1>
-                    <div class="radioset mb1">
-                        <h2>눈금 단위:</h2>
+                    <h2>눈금 단위:</h2>
+                    <div class="radioset mb15">
                         <input type="radio" id="radio-unit-ratio" name="radio-unit" checked>
                         <label for="radio-unit-ratio" title="비율에 따라 맵을 제도합니다. 모바일 환경에서도 정상적으로 출력됩니다.">
-                            <i class="icon"></i>
-                            <span>퍼센트</span>
+                            <span>퍼센트(%)</span>
                         </label>
                         <input type="radio" id="radio-unit-pixel" name="radio-unit">
                         <label for="radio-unit-pixel" title="고정값으로 맵을 제도합니다. 모바일 환경에서는 정상적으로 출력되지 않을 수 있습니다.">
-                            <i class="icon"></i>
-                            <span>픽셀</span>
+                            <span>픽셀(px)</span>
                         </label>
                     </div>
-                    <div class="radioset">
-                        <h2>제도 방식:</h2>
+                    <h2>제도 방식:</h2>
+                    <div class="radioset mb15">
                         <input type="radio" id="radio-draw-drag" name="radio-draw" checked>
-                        <label for="radio-draw-drag" title="비율에 따라 맵을 제도합니다. 모바일 환경에서도 정상적으로 출력됩니다.">
-                            <i class="icon"></i>
+                        <label for="radio-draw-drag" title="드래그 & 릴리즈 방식으로 맵을 제도합니다.">
                             <span>드래그</span>
                         </label>
                         <input type="radio" id="radio-draw-click" name="radio-draw">
-                        <label for="radio-draw-click" title="고정값으로 맵을 제도합니다. 모바일 환경에서는 정상적으로 출력되지 않을 수 있습니다.">
-                            <i class="icon"></i>
+                        <label for="radio-draw-click" title="양 극점을 클릭하는 방식으로 맵을 제도합니다.">
                             <span>클릭</span>
                         </label>
+                    </div>
+                    <h2>기타 환경설정:</h2>
+                    <div class="checkset mb15">
+                        <input type="checkbox" id="chk-alert" checked>
+                        <label for="chk-alert" title="변동사항 적용 확인 메시지를 출력합니다.">
+                            <i class="icon"></i><span>경고 메시지 출력</span>
+                        </label>
+                        <input type="checkbox" id="chk-autopopup" checked>
+                        <label for="chk-autopopup" title="맵 생성시 링크 팝업을 자동으로 실행합니다.">
+                            <i class="icon"></i><span>링크 팝업 자동실행</span>
+                        </label>
+                        <input type="checkbox" id="chk-shortcut">
+                        <label for="chk-shortcut" title="키보드 단축키를 사용하도록 설정합니다.">
+                            <i class="icon"></i><span>키보드 단축키 사용</span>
+                        </label>
+                    </div>
+                    <div class="btnset mb2">
+                        <button id="set-short" title="단축키 일람">
+                            <i class="icon"></i><span>단축키 일람</span>
+                        </button>
+                        <button id="set-lang" title="언어 설정">
+                            <i class="icon"></i><span>언어 설정</span>
+                        </button>
                     </div>
                     <div class="btnset bottom">
                         <button class="btn-apply" title="적용">
@@ -158,6 +179,9 @@
                     </div>
                 </article>
             </div>
+            <!--// 서랍 -->
+
+            <button id="btn-ruler" style="background: red;"></button>
             <div class="ruler x"></div>
             <div class="ruler y"></div>
         </main>

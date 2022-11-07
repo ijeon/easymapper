@@ -19,4 +19,5 @@ function toolOpen() {
 
 function toolClose() {
     $('main').removeClass('dimmed');
+    $('.tool').removeClass('active');
 }

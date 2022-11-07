@@ -23,11 +23,12 @@ button { text-align:center; }
 :root { font:16px/1 nanumgothic; }
 body { font-size:1rem; color:#222; }
 .mb1 { margin-bottom:1rem; }
+.mb15 { margin-bottom:1.5rem; }
 .mb2 { margin-bottom:2rem; }
 .icon::after { content:''; display:inline-block; width:1.5rem; height:1.5rem; -webkit-mask-size:cover; mask-size:cover; }
 
-#wrap { display:flex; height:100%; }
-#toolbar { height:100%; background-color:#8785c4; }
+#wrap { display:flex; width:100%; height:100%; }
+#toolbar { height:100%; background-color:#8785c4; z-index:12; }
 #toolbar .tool { position:relative; display:block; width:3rem; height:3rem; transition:all ease-in-out .14s; }
 #toolbar .tool:hover,
 #toolbar .tool.active { background-color:rgba(255,255,255,.25); }
@@ -37,34 +38,48 @@ body { font-size:1rem; color:#222; }
 #toolbar .tool#nav-prev::after { -webkit-mask-image:url(img/eye.svg); mask-image:url(img/eye.svg); }
 #toolbar .tool#nav-set::after { -webkit-mask-image:url(img/settings.svg); mask-image:url(img/settings.svg); }
 
-main { position:relative; flex-grow:1; }
-main #dim { position:absolute; top:0; left:0; display:none; width:100%; height:100%; background-color:rgba(0,0,0,.6); z-index:10; }
-main.dimmed #dim,
-main.dimmed #drawer { display:block; }
-main #dim #btn-close { position:absolute; top:0; left:25rem; width:3rem; height:3rem; background-color:rgba(0,0,0,.25); transition:all ease-in-out .14s; }
+main { position:relative; display:grid; grid-template-columns:2rem auto; flex-grow:1; overflow:auto; }
+main #dim { position:absolute; top:0; left:0; visibility:hidden; width:100%; height:100%; background-color:rgba(0,0,0,.6); z-index:10; opacity:0; transition:all ease-in-out .14s; }
+main.dimmed #dim { visibility:visible; opacity:1; }
+main.dimmed #drawer { left:0; }
+main #dim #btn-close { position:absolute; top:0; left:3rem; width:3rem; height:3rem; background-color:rgba(0,0,0,.25); transition:all ease-in-out .14s; }
+main.dimmed #dim #btn-close { left:25rem; }
 main #dim #btn-close:hover { background-color:rgba(0,0,0,.5); }
 main #dim #btn-close::after { background-color:#fff; -webkit-mask-image:url(img/close.svg); mask-image:url(img/close.svg); }
-main #drawer { position:absolute; top:0; left:0; display:none; width:25rem; height:100%; color:#4c4a85; background-color:#a5a4d3; z-index:11; overflow-y:auto; }
+
+main #drawer { position:absolute; top:0; left:-25rem; width:25rem; height:100%; color:#4c4a85; background-color:#a5a4d3; z-index:11; overflow-y:auto; transition:all ease-in-out .14s; }
 main #drawer article { display:none; padding:0 1rem 1rem; }
 main #drawer article.active { display:block; }
 main #drawer article h1 { position:sticky; top:0; font-weight:bold; text-align:center; border-bottom:2px dashed #7977af; line-height:3rem; margin-bottom:1.5rem; background-color:#a5a4d3; z-index:10; }
 main #drawer article h2 { margin-bottom:0.75rem; font-weight:bold; }
-main #drawer article #img-list .img-list-item { display:flex; height:3rem; background-color:rgba(255,255,255,.6); margin-bottom:0.75rem; }
-main #drawer article #img-list .img-list-item:last-child { margin-bottom:0; }
+main #drawer article #img-list .img-list-item,
+main #drawer article .checkset input + label { display:flex; height:3rem; background-color:rgba(255,255,255,.6); margin-bottom:0.75rem; }
+main #drawer article #img-list .img-list-item:last-child,
+main #drawer article .checkset input + label:last-child { margin-bottom:0; }
 main #drawer article #img-list .img-list-item .img-move,
-main #drawer article #img-list .img-list-item button { flex-basis:3rem; padding:0.75rem; transition:all ease-in-out .14s; }
-main #drawer article #img-list .img-list-item .img-move { background-color:#8785c4; cursor:grab; }
-main #drawer article #img-list .img-list-item .img-move:hover { background-color:#7777b9; }
+main #drawer article #img-list .img-list-item button,
+main #drawer article .checkset input + label i { flex-basis:3rem; padding:0.75rem; transition:all ease-in-out .14s; }
+main #drawer article #img-list .img-list-item .img-move,
+main #drawer article .checkset input + label i { background-color:#8785c4; }
+main #drawer article #img-list .img-list-item .img-move { cursor:grab; }
+main #drawer article #img-list .img-list-item .img-move:hover,
+main #drawer article .checkset input + label:hover i { background-color:#7777b9; }
 main #drawer article #img-list .img-list-item .img-move::after { background-color:#fff; -webkit-mask-image:url(img/move.svg); mask-image:url(img/move.svg); }
 main #drawer article #img-list .img-list-item button::after { background-color:#4c4a85; }
-main #drawer article #img-list .img-list-item button:hover { background-color:#c0bee0; }
+main #drawer article #img-list .img-list-item button:hover,
+main #drawer article .checkset input + label:hover span { background-color:#c0bee0; }
 main #drawer article #img-list .img-list-item .img-upload::after { -webkit-mask-image:url(img/upload.svg); mask-image:url(img/upload.svg); }
 main #drawer article #img-list .img-list-item .img-delete::after { -webkit-mask-image:url(img/delete.svg); mask-image:url(img/delete.svg); }
 main #drawer article #img-list .img-list-item .img-path { flex-grow:1; line-height:3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 0.75rem; }
 main #drawer article #img-list .img-list-item.loaded .img-path { cursor:zoom-in; }
-main #drawer article .btnset { display:flex; margin-top:1rem; flex-wrap:wrap; column-gap:0.5rem; }
-main #drawer article .btnset button { flex-grow:1; flex-basis:25%; height:3rem; color:#fff; background-color:#8785c4; transition:all ease-in-out .14s; }
-main #drawer article .btnset button:hover { background-color:#7777b9; }
+main #drawer article .btnset,
+main #drawer article .radioset { display:flex; column-gap:0.5rem; }
+main #drawer article .btnset { margin-top:1rem; }
+main #drawer article .btnset button,
+main #drawer article .radioset input + label { flex-grow:1; flex-basis:25%; height:3rem; color:#fff; background-color:#8785c4; transition:all ease-in-out .14s; }
+main #drawer article .btnset button:hover,
+main #drawer article .radioset input + label:hover,
+main #drawer article .radioset input:checked + label { background-color:#7777b9; }
 main #drawer article .btnset button.btn-discard { background-color:#908db4; }
 main #drawer article .btnset button.btn-discard:hover { background-color:#8684a2; }
 main #drawer article .btnset button i,
@@ -79,21 +94,24 @@ main #drawer article #homs-src i::after { -webkit-mask-image:url(img/code.svg); 
 main #drawer article #prev-pc i::after { -webkit-mask-image:url(img/pc.svg); mask-image:url(img/pc.svg); }
 main #drawer article #prev-mo i::after { -webkit-mask-image:url(img/mobile.svg); mask-image:url(img/mobile.svg); }
 main #drawer article #prev-custom i::after { -webkit-mask-image:url(img/devices.svg); mask-image:url(img/devices.svg); }
+main #drawer article #set-short i::after { -webkit-mask-image:url(img/smallkeyboard.svg); mask-image:url(img/smallkeyboard.svg); }
+main #drawer article #set-lang i::after { -webkit-mask-image:url(img/globe.svg); mask-image:url(img/globe.svg); }
 main #drawer article .src-code { width:100%; padding:0.5rem; background-color:#fff; word-break:break-all; line-height:1.5rem; }
 main #drawer article .src-code[disabled] { background-color:#ccc; }
 main #drawer article #prev-form { display:flex; flex-basis:25%; flex-grow:1; }
-main #drawer article #prev-form input { width:calc(100% - 3rem); padding:0.75rem; background-color:#fff; }
+main #drawer article #prev-form input { width:calc(100% - 3rem); padding:0.75rem; background-color:#fff; text-align:right; }
 main #drawer article #prev-form span { text-align:center; line-height:3rem; padding-left:0.5rem; font-weight:bold; }
 main #drawer article #prev-form span::after { -webkit-mask-image:url(img/close.svg); mask-image:url(img/close.svg); background-color:#4c4a85; }
-main #drawer article .radioset { display:flex; white-space:nowrap; }
-main #drawer article .radioset h2 { margin-bottom:0; line-height:1.5rem; flex-basis:30%; }
-main #drawer article .radioset input { display:none; }
-main #drawer article .radioset input + label { flex-grow:1; flex-basis:20%; text-align:right; font-size:0; }
-main #drawer article .radioset input + label i { width:1.5rem; height:1.5rem; margin-right:0.5rem; }
-main #drawer article .radioset input + label i,
-main #drawer article .radioset input + label span { display:inline-block; vertical-align:top; }
-main #drawer article .radioset input:checked + label i::after { -webkit-mask-image:url(img/ruler.svg); mask-image:url(img/ruler.svg); background-color:#4c4a85; }
-main #drawer article .radioset input + label span { line-height:1.5rem; font-size:1rem; }
-main #drawer article .radioset input:checked + label span { font-weight:bold; }
+main #drawer article .radioset input,
+main #drawer article .checkset input { display:none; }
+main #drawer article .radioset input + label { opacity:.6; }
+main #drawer article .radioset input:checked + label { opacity:1; }
+main #drawer article .radioset input + label span { display:block; line-height:3rem; text-align:center; }
+main #drawer article .checkset input + label i::after { -webkit-mask-image:url(img/notchecked.svg); mask-image:url(img/notchecked.svg); background-color:#fff; }
+main #drawer article .checkset input:checked + label i::after { -webkit-mask-image:url(img/checked.svg); mask-image:url(img/checked.svg); }
+main #drawer article .checkset input + label span { line-height:3rem; padding:0 0.75rem; flex-grow:1; transition:all ease-in-out .14s; }
 
-main .ruler.x { position:sticky; top:0; width:100%; height:2rem; border-bottom:1px solid #ddd; }
+main #btn-ruler { flex-basis:2rem; height:2rem; }
+main .ruler { position:sticky; }
+main .ruler.x { top:0; width:100%; height:2rem; border-bottom:1px solid #ddd; }
+main .ruler.y { left:0; width:2rem; min-height:100%; border-right:1px solid #ddd; }
